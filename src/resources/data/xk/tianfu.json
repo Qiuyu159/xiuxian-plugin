@@ -1,0 +1,152 @@
+[
+  {
+    "id": 213,
+    "name": "剑法精通-新手",
+    "type": "战斗天赋",
+    "quality": "白",
+    "description": "剑法精通+35",
+    "effects": {
+      "剑法精通": 35
+    }
+  },
+  {
+    "id": 209,
+    "name": "刀法精通-新手",
+    "type": "战斗天赋",
+    "quality": "白",
+    "description": "刀法精通+35",
+    "effects": {
+      "刀法精通": 35
+    }
+  },
+  {
+    "id": 203,
+    "name": "暗器精通-新手",
+    "type": "战斗天赋",
+    "quality": "白",
+    "description": "暗器精通+35",
+    "effects": {
+      "暗器精通": 35
+    }
+  },
+  {
+    "id": 215,
+    "name": "奇门精通-新手",
+    "type": "战斗天赋",
+    "quality": "白",
+    "description": "奇门精通+35",
+    "effects": {
+      "奇门精通": 35
+    }
+  },
+  {
+    "id": 207,
+    "name": "拳掌精通-新手",
+    "type": "战斗天赋",
+    "quality": "白",
+    "description": "拳掌精通+35",
+    "effects": {
+      "拳掌精通": 35
+    }
+  },
+  {
+    "id": 198,
+    "name": "腿法精通-新手",
+    "type": "战斗天赋",
+    "quality": "白",
+    "description": "腿法精通+35",
+    "effects": {
+      "腿法精通": 35
+    }
+  },
+  {
+    "id": "ldts_xs",
+    "name": "力道提升-新手",
+    "type": null,
+    "quality": "白",
+    "description": "力道+35",
+    "effects": {
+      "力道": 35
+    }
+  },
+  {
+    "id": "tzts_xs",
+    "name": "体质提升-新手",
+    "type": null,
+    "quality": "白",
+    "description": "体质+35",
+    "effects": {
+      "体质": 35
+    }
+  },
+  {
+    "id": "jlts_xs",
+    "name": "精力提升-新手",
+    "type": null,
+    "quality": "白",
+    "description": "精力+35",
+    "effects": {
+      "精力": 35
+    }
+  },
+  {
+    "id": "lqts_xs",
+    "name": "灵巧提升-新手",
+    "type": null,
+    "quality": "白",
+    "description": "灵巧+35",
+    "effects": {
+      "灵巧": 35
+    }
+  },
+  {
+    "id": "wxts_xs",
+    "name": "悟性提升-新手",
+    "type": null,
+    "quality": "白",
+    "description": "悟性+35",
+    "effects": {
+      "悟性": 35
+    }
+  },
+  {
+    "id": "njts_xs",
+    "name": "内劲提升-新手",
+    "type": null,
+    "quality": "白",
+    "description": "内劲+35",
+    "effects": {
+      "内劲": 35
+    }
+  },
+  {
+    "id": 382,
+    "name": "锯齿大刀",
+    "type": "战斗天赋",
+    "quality": "白",
+    "description": "刀系招式暴击时，有20%几率附加流血+20",
+    "effects": {
+      "暴击特效": "刀系招式暴击时，有20%几率附加流血+20"
+    }
+  },
+  {
+    "id": 1803,
+    "name": "医术精通-新手",
+    "type": "战斗天赋",
+    "quality": "白",
+    "description": "医术精通+35",
+    "effects": {
+      "医术精通": 35
+    }
+  },
+  {
+    "id": 1798,
+    "name": "内功精通-新手",
+    "type": "战斗天赋",
+    "quality": "白",
+    "description": "内功精通+35",
+    "effects": {
+      "内功精通": 35
+    }
+  }
+]

@@ -1,54 +1,5 @@
-import 灵根列表 from '../resources/data/item/灵根列表.json';
-import 怪物列表 from '../resources/data/item/怪物列表.json';
-import 商品列表 from '../resources/data/item/商品列表.json';
-import 练气境界 from '../resources/data/Level/练气境界.json';
-import 积分商城 from '../resources/data/item/积分商城.json';
-import 炼体境界 from '../resources/data/Level/炼体境界.json';
-import 装备列表 from '../resources/data/item/装备列表.json';
-import 丹药列表 from '../resources/data/item/丹药列表.json';
-import 炼丹师丹药 from '../resources/data/item/炼丹师丹药.json';
-import 道具列表 from '../resources/data/item/道具列表.json';
-import 功法列表 from '../resources/data/item/功法列表.json';
-import 草药列表 from '../resources/data/item/草药列表.json';
-import 地点列表 from '../resources/data/item/地点列表.json';
-import 洞天福地 from '../resources/data/item/洞天福地.json';
-import 宗门秘境 from '../resources/data/item/宗门秘境.json';
-import 禁地列表 from '../resources/data/item/禁地列表.json';
-import 仙境列表 from '../resources/data/item/仙境列表.json';
-import 限定仙府 from '../resources/data/Timelimit/限定仙府.json';
-import 限定功法 from '../resources/data/Timelimit/限定功法.json';
-import 限定装备 from '../resources/data/Timelimit/限定装备.json';
-import 限定丹药 from '../resources/data/Timelimit/限定丹药.json';
-import 职业列表 from '../resources/data/occupation/职业列表.json';
-import experience from '../resources/data/occupation/experience.json';
-import 炼丹配方 from '../resources/data/occupation/炼丹配方.json';
-import 装备图纸 from '../resources/data/occupation/装备图纸.json';
-import 八品 from '../resources/data/item/八品.json';
-import 星阁拍卖行列表 from '../resources/data/item/星阁拍卖行列表.json';
-import 天地堂 from '../resources/data/item/天地堂.json';
-import 常驻仙宠 from '../resources/data/item/常驻仙宠.json';
-import 仙宠列表 from '../resources/data/item/仙宠列表.json';
-import 仙宠口粮列表 from '../resources/data/item/仙宠口粮列表.json';
-import npc列表 from '../resources/data/item/npc列表.json';
-import shop列表 from '../resources/data/item/shop列表.json';
-import 青龙 from '../resources/data/Timelimit/青龙.json';
-import 麒麟 from '../resources/data/Timelimit/麒麟.json';
-import 玄武朱雀白虎 from '../resources/data/Timelimit/玄武朱雀白虎.json';
-import 魔界列表 from '../resources/data/item/魔界列表.json';
-import 兑换列表 from '../resources/data/item/兑换列表.json';
-import 神界列表 from '../resources/data/item/神界列表.json';
-import 技能列表1 from '../resources/data/item/技能列表1.json';
-import 技能列表2 from '../resources/data/item/技能列表2.json';
-import 强化列表 from '../resources/data/item/强化列表.json';
-import 锻造材料 from '../resources/data/item/锻造材料.json';
-import 锻造武器 from '../resources/data/item/锻造武器.json';
-import 锻造护具 from '../resources/data/item/锻造护具.json';
-import 锻造宝物 from '../resources/data/item/锻造宝物.json';
-import 隐藏灵根 from '../resources/data/item/隐藏灵根.json';
-import 锻造杂类 from '../resources/data/item/锻造杂类.json';
-import 技能列表 from '../resources/data/item/技能列表.json';
-import updateRecord from '../resources/data/updateRecord.json';
-import MonthMarket from '../resources/data/item/MothMarket.json';
+// JSON files will be loaded dynamically to avoid TypeScript import issues
+
 import type { TalentItem, LevelStageItem, PhysiqueStageItem, CommodityItem, GongfaItem, EquipmentTuzhiItem, PetItem, PetFoodItem } from '../types/data';
 import type {
   MonsterItem,
@@ -64,60 +15,85 @@ import type {
 import type { ScoreShopItem, LimitedEquipItem, OccupationItem, DanfangItem, BapinItem, HallItem, PermanentPetItem, SkillItem } from '../types/data_extra';
 import { __PATH } from './keys.js';
 import { getIoRedis } from '@alemonjs/db';
+import { logger } from 'alemonjs';
+import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+
+// 动态加载JSON文件的函数
+const loadJSON = (filePath: string) => {
+  try {
+    // 使用相对路径直接加载，避免import.meta兼容性问题
+    const fullPath = join(__dirname, '..', filePath);
+    const data = readFileSync(fullPath, 'utf8');
+
+    return JSON.parse(data);
+  } catch (error) {
+    logger.error(`Failed to load JSON file ${filePath}: ${error}`);
+
+    return [];
+  }
+};
 
 export const DATA_LIST = {
   // 使用英文名
-  Talent: 灵根列表,
-  Monster: 怪物列表,
-  Commodity: 商品列表,
-  Level1: 练气境界,
-  ScoreShop: 积分商城,
-  Level2: 炼体境界,
-  Equipment: 装备列表,
-  Danyao: 丹药列表,
-  NewDanyao: 炼丹师丹药,
-  Daoju: 道具列表,
-  Gongfa: 功法列表,
-  Caoyao: 草药列表,
-  Didian: 地点列表,
-  Bless: 洞天福地,
-  GuildSecrets: 宗门秘境,
-  ForbiddenArea: 禁地列表,
-  FairyRealm: 仙境列表,
-  TimePlace: 限定仙府,
-  TimeGongfa: 限定功法,
-  TimeEquipment: 限定装备,
-  TimeDanyao: 限定丹药,
-  Occupation: 职业列表,
-  experience,
-  Danfang: 炼丹配方,
-  Tuzhi: 装备图纸,
-  Bapin: 八品,
-  Xingge: 星阁拍卖行列表,
-  Tianditang: 天地堂,
-  Changzhuxianchon: 常驻仙宠,
-  Xianchon: 仙宠列表,
-  Xianchonkouliang: 仙宠口粮列表,
-  NPC: npc列表,
-  Shop: shop列表,
-  Qinglong: 青龙,
-  Qilin: 麒麟,
-  Xuanwu: 玄武朱雀白虎,
-  Mojie: 魔界列表,
-  ExchangeItem: 兑换列表,
-  Shenjie: 神界列表,
-  Jineng1: 技能列表1,
-  Jineng2: 技能列表2,
-  Qianghua: 强化列表,
-  Duanzhaocailiao: 锻造材料,
-  Duanzhaowuqi: 锻造武器,
-  Duanzhaohuju: 锻造护具,
-  Duanzhaobaowu: 锻造宝物,
-  Yincang: 隐藏灵根,
-  Zalei: 锻造杂类,
-  Jineng: 技能列表,
-  UpdateRecord: updateRecord,
-  MonthMarket: MonthMarket
+  Talent: loadJSON('../resources/data/灵根列表.json'),
+  Monster: loadJSON('../resources/data/怪物列表.json'),
+  Commodity: loadJSON('../resources/data/商品列表.json'),
+  Level1: loadJSON('../resources/data/练气境界.json'),
+  ScoreShop: loadJSON('../resources/data/积分商城.json'),
+  Level2: loadJSON('../resources/data/炼体境界.json'),
+  Equipment: loadJSON('../resources/data/装备列表.json'),
+  Danyao: loadJSON('../resources/data/丹药列表.json'),
+  NewDanyao: loadJSON('../resources/data/炼丹师丹药.json'),
+  Daoju: loadJSON('../resources/data/道具列表.json'),
+  Gongfa: loadJSON('../resources/data/功法列表.json'),
+  Caoyao: loadJSON('../resources/data/草药列表.json'),
+  Didian: loadJSON('../resources/data/地点列表.json'),
+  Bless: loadJSON('../resources/data/洞天福地.json'),
+  GuildSecrets: loadJSON('../resources/data/宗门秘境.json'),
+  ForbiddenArea: loadJSON('../resources/data/禁地列表.json'),
+  FairyRealm: loadJSON('../resources/data/仙境列表.json'),
+  TimePlace: loadJSON('../resources/data/限定仙府.json'),
+  TimeGongfa: loadJSON('../resources/data/限定功法.json'),
+  TimeEquipment: loadJSON('../resources/data/限定装备.json'),
+  TimeDanyao: loadJSON('../resources/data/限定丹药.json'),
+  Occupation: loadJSON('../resources/data/职业列表.json'),
+  experience: loadJSON('../resources/data/experience.json'),
+  Danfang: loadJSON('../resources/data/炼丹配方.json'),
+  Tuzhi: loadJSON('../resources/data/装备图纸.json'),
+  Bapin: loadJSON('../resources/data/八品.json'),
+  Xingge: loadJSON('../resources/data/星阁拍卖行列表.json'),
+  Tianditang: loadJSON('../resources/data/天地堂.json'),
+  Changzhuxianchon: loadJSON('../resources/data/常驻仙宠.json'),
+  Xianchon: loadJSON('../resources/data/仙宠列表.json'),
+  Xianchonkouliang: loadJSON('../resources/data/仙宠口粮列表.json'),
+  NPC: loadJSON('../resources/data/npc列表.json'),
+  Shop: loadJSON('../resources/data/shop列表.json'),
+  Qinglong: loadJSON('../resources/data/青龙.json'),
+  Qilin: loadJSON('../resources/data/麒麟.json'),
+  Xuanwu: loadJSON('../resources/data/玄武朱雀白虎.json'),
+  Mojie: loadJSON('../resources/data/魔界列表.json'),
+  ExchangeItem: loadJSON('../resources/data/兑换列表.json'),
+  Shenjie: loadJSON('../resources/data/神界列表.json'),
+  Jineng1: loadJSON('../resources/data/技能列表1.json'),
+  Jineng2: loadJSON('../resources/data/技能列表2.json'),
+  Qianghua: loadJSON('../resources/data/强化列表.json'),
+  Duanzhaocailiao: loadJSON('../resources/data/item/锻造材料.json'),
+  Duanzhaowuqi: loadJSON('../resources/data/item/锻造武器.json'),
+  Duanzhaohuju: loadJSON('../resources/data/item/锻造护具.json'),
+  Duanzhaobaowu: loadJSON('../resources/data/item/锻造宝物.json'),
+  Yincang: loadJSON('../resources/data/item/隐藏灵根.json'),
+  Zalei: loadJSON('../resources/data/item/锻造杂类.json'),
+  Jineng: loadJSON('../resources/data/item/技能列表.json'),
+  // xk
+  UpdateRecord: loadJSON('../resources/data/updateRecord.json'),
+  MonthMarket: loadJSON('../resources/data/item/MothMarket.json'),
+  Goods: loadJSON('../resources/data/xk/goods.json'),
+  Menpai: loadJSON('../resources/data/xk/menpai.json'),
+  Miji: loadJSON('../resources/data/xk/miji.json'),
+  Player: loadJSON('../resources/data/xk/player.json'),
+  Tianfu: loadJSON('../resources/data/xk/tianfu.json'),
+  Zhuangbei: loadJSON('../resources/data/xk/zhuangbei.json')
 };
 
 export type DataList = typeof DATA_LIST;
@@ -183,58 +159,68 @@ export default {
   Occupation: __PATH.occupation,
 
   /**
-   * list 读取优化
+   * list 读取优化 - 使用动态加载的数据
    */
 
-  talent_list: 灵根列表 as TalentItem[],
-  monster_list: 怪物列表 as MonsterItem[],
-  commodities_list: 商品列表 as CommodityItem[],
-  Level_list: 练气境界 as LevelStageItem[],
-  shitujifen: 积分商城 as ScoreShopItem[],
-  LevelMax_list: 炼体境界 as PhysiqueStageItem[],
-  equipment_list: 装备列表 as EquipmentItem[],
-  danyao_list: 丹药列表 as DanyaoFullItem[],
-  newdanyao_list: 炼丹师丹药 as DanyaoFullItem[],
-  daoju_list: 道具列表 as CommodityItem[],
-  gongfa_list: 功法列表 as GongfaItem[],
-  caoyao_list: 草药列表 as CommodityItem[],
-  didian_list: 地点列表 as PlaceItem[],
-  bless_list: 洞天福地 as PlaceItem[],
-  guildSecrets_list: 宗门秘境 as SecretAreaItem[],
-  forbiddenarea_list: 禁地列表 as SecretAreaItem[],
-  Fairyrealm_list: 仙境列表 as PlaceItem[],
-  timeplace_list: 限定仙府 as PlaceItem[],
-  timegongfa_list: 限定功法 as GongfaItem[],
-  timeequipmen_list: 限定装备 as LimitedEquipItem[],
-  timedanyao_list: 限定丹药 as DanyaoFullItem[],
-  occupation_list: 职业列表 as OccupationItem[],
-  occupation_exp_list: experience as Array<{
+  talent_list: DATA_LIST.Talent as TalentItem[],
+  monster_list: DATA_LIST.Monster as MonsterItem[],
+  commodities_list: DATA_LIST.Commodity as CommodityItem[],
+  Level_list: DATA_LIST.Level1 as LevelStageItem[],
+  shitujifen: DATA_LIST.ScoreShop as ScoreShopItem[],
+  LevelMax_list: DATA_LIST.Level2 as PhysiqueStageItem[],
+  equipment_list: DATA_LIST.Equipment as EquipmentItem[],
+  danyao_list: DATA_LIST.Danyao as DanyaoFullItem[],
+  newdanyao_list: DATA_LIST.NewDanyao as DanyaoFullItem[],
+  daoju_list: DATA_LIST.Daoju as CommodityItem[],
+  gongfa_list: DATA_LIST.Gongfa as GongfaItem[],
+  caoyao_list: DATA_LIST.Caoyao as CommodityItem[],
+  didian_list: DATA_LIST.Didian as PlaceItem[],
+  bless_list: DATA_LIST.Bless as PlaceItem[],
+  guildSecrets_list: DATA_LIST.GuildSecrets as SecretAreaItem[],
+  forbiddenarea_list: DATA_LIST.ForbiddenArea as SecretAreaItem[],
+  Fairyrealm_list: DATA_LIST.FairyRealm as PlaceItem[],
+  timeplace_list: DATA_LIST.TimePlace as PlaceItem[],
+  timegongfa_list: DATA_LIST.TimeGongfa as GongfaItem[],
+  timeequipmen_list: DATA_LIST.TimeEquipment as LimitedEquipItem[],
+  timedanyao_list: DATA_LIST.TimeDanyao as DanyaoFullItem[],
+  occupation_list: DATA_LIST.Occupation as OccupationItem[],
+  occupation_exp_list: DATA_LIST.experience as Array<{
     id: number;
     name: string;
     experience: number;
     rate: number;
   }>,
-  danfang_list: 炼丹配方 as DanfangItem[],
-  tuzhi_list: 装备图纸 as EquipmentTuzhiItem[],
+  danfang_list: DATA_LIST.Danfang as DanfangItem[],
+  tuzhi_list: DATA_LIST.Tuzhi as EquipmentTuzhiItem[],
 
-  npc_list: npc列表 as NPCGroupItem[],
-  shop_list: shop列表 as ShopItem[],
+  npc_list: DATA_LIST.NPC as NPCGroupItem[],
+  shop_list: DATA_LIST.Shop as ShopItem[],
 
-  bapin: 八品 as BapinItem[],
-  xingge: 星阁拍卖行列表 as AuctionItem[],
-  tianditang: 天地堂 as HallItem[],
-  changzhuxianchon: 常驻仙宠 as PermanentPetItem[],
-  xianchon: 仙宠列表 as PetItem[],
-  xianchonkouliang: 仙宠口粮列表 as PetFoodItem[],
+  bapin: DATA_LIST.Bapin as BapinItem[],
+  xingge: DATA_LIST.Xingge as AuctionItem[],
+  tianditang: DATA_LIST.Tianditang as HallItem[],
+  changzhuxianchon: DATA_LIST.Changzhuxianchon as PermanentPetItem[],
+  xianchon: DATA_LIST.Xianchon as PetItem[],
+  xianchonkouliang: DATA_LIST.Xianchonkouliang as PetFoodItem[],
 
-  qinlong: 青龙 as RealmShopGroupItem[],
-  qilin: 麒麟 as RealmShopGroupItem[],
-  xuanwu: 玄武朱雀白虎 as RealmShopGroupItem[],
-  mojie: 魔界列表 as RealmShopGroupItem[],
+  qinlong: DATA_LIST.Qinglong as RealmShopGroupItem[],
+  qilin: DATA_LIST.Qilin as RealmShopGroupItem[],
+  xuanwu: DATA_LIST.Xuanwu as RealmShopGroupItem[],
+  mojie: DATA_LIST.Mojie as RealmShopGroupItem[],
   /**
-   * 技能列表 (待处理)
+   * 技能列表
    */
-  jineng1: 技能列表1 as SkillItem[],
-  jineng2: 技能列表2 as SkillItem[],
-  jineng: 技能列表 as SkillItem[]
+  jineng1: DATA_LIST.Jineng1 as SkillItem[],
+  jineng2: DATA_LIST.Jineng2 as SkillItem[],
+  jineng: DATA_LIST.Jineng as SkillItem[],
+
+  /**
+   * xk 目录数据列表
+   */
+  Goods: DATA_LIST.Goods,
+  Menpai: DATA_LIST.Menpai,
+  Miji: DATA_LIST.Miji,
+  Player: DATA_LIST.Player,
+  Tianfu: DATA_LIST.Tianfu,
+  Zhuangbei: DATA_LIST.Zhuangbei
 };

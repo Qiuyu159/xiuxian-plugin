@@ -1,10 +1,10 @@
 import { getIoRedis } from '@alemonjs/db';
-import Association from '@src/config/help/association';
-import help from '@src/config/help/base';
-import set from '@src/config/help/admin';
-import shituhelp from '@src/config/help/professor';
-import xiuxian from '@src/config/xiuxian';
-import { ActionType } from '@src/types/keys';
+import Association from '../config/help/association';
+import help from '../config/help/base';
+import set from '../config/help/admin';
+import shituhelp from '../config/help/professor';
+import xiuxian from '../config/xiuxian';
+import { ActionType } from '../types/keys';
 
 const baseDataKey = 'data:alemonjs-xiuxian';
 
