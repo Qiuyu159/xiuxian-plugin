@@ -21,3 +21,4 @@ mysql-connector-j-9.1.0
 .data
 .eslintcache
 /redis-data
+/mysql-data
