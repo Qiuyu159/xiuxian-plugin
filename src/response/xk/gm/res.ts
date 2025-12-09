@@ -18,6 +18,7 @@ export const regular = /^(#|＃|\/)?侠客获得(.*)\*(\d+)$/;
  */
 function toInt(v: string, d = 0): number {
   const n = Number(v);
+
   return Number.isFinite(n) ? Math.trunc(n) : d;
 }
 
@@ -27,23 +28,23 @@ function toInt(v: string, d = 0): number {
 async function getItemData(itemName: string): Promise<any> {
   try {
     const xkItemData = await redis.get('XKItem');
-    
+
     if (!xkItemData) {
       return null;
     }
 
     const xkItemList = JSON.parse(xkItemData);
-    
+
     // 查找物品 - 支持多种可能的字段名
-    const item = xkItemList.find((item: any) => 
-      item.name === itemName || 
-      item.名称 === itemName || 
-      item.itemName === itemName
+    const item = xkItemList.find((item: any) => item.name === itemName
+      || item.名称 === itemName
+      || item.itemName === itemName
     );
 
     return item || null;
   } catch (error) {
     console.error('获取物品数据失败:', error);
+
     return null;
   }
 }
@@ -54,7 +55,7 @@ async function getItemData(itemName: string): Promise<any> {
 async function getPlayerXKData(userId: string): Promise<any> {
   try {
     const playerDataStr = await redis.get(`xk_player_data:${userId}`);
-    
+
     if (!playerDataStr) {
       return null;
     }
@@ -62,6 +63,7 @@ async function getPlayerXKData(userId: string): Promise<any> {
     return JSON.parse(playerDataStr);
   } catch (error) {
     console.error('获取玩家侠客数据失败:', error);
+
     return null;
   }
 }
@@ -72,9 +74,11 @@ async function getPlayerXKData(userId: string): Promise<any> {
 async function savePlayerXKData(userId: string, playerData: any): Promise<boolean> {
   try {
     await redis.set(`xk_player_data:${userId}`, JSON.stringify(playerData));
+
     return true;
   } catch (error) {
     console.error('保存玩家侠客数据失败:', error);
+
     return false;
   }
 }
@@ -85,7 +89,7 @@ async function savePlayerXKData(userId: string, playerData: any): Promise<boolea
 async function getPlayerBagData(userId: string): Promise<any> {
   try {
     const bagDataStr = await redis.get(`xk_bag:${userId}`);
-    
+
     if (!bagDataStr) {
       return null;
     }
@@ -93,6 +97,7 @@ async function getPlayerBagData(userId: string): Promise<any> {
     return JSON.parse(bagDataStr);
   } catch (error) {
     console.error('获取玩家背包数据失败:', error);
+
     return null;
   }
 }
@@ -103,9 +108,11 @@ async function getPlayerBagData(userId: string): Promise<any> {
 async function savePlayerBagData(userId: string, bagData: any): Promise<boolean> {
   try {
     await redis.set(`xk_bag:${userId}`, JSON.stringify(bagData));
+
     return true;
   } catch (error) {
     console.error('保存玩家背包数据失败:', error);
+
     return false;
   }
 }
@@ -116,7 +123,7 @@ async function savePlayerBagData(userId: string, bagData: any): Promise<boolean>
 async function handleMoneyAdd(userId: string, quantity: number): Promise<boolean> {
   try {
     const playerData = await getPlayerXKData(userId);
-    
+
     if (!playerData) {
       return false;
     }
@@ -137,6 +144,7 @@ async function handleMoneyAdd(userId: string, quantity: number): Promise<boolean
     return await savePlayerXKData(userId, playerData);
   } catch (error) {
     console.error('处理铜钱添加失败:', error);
+
     return false;
   }
 }
@@ -148,18 +156,18 @@ async function handleItemAdd(userId: string, itemName: string, quantity: number)
   try {
     // 获取物品数据
     const itemData = await getItemData(itemName);
-    
+
     if (!itemData) {
       return false;
     }
 
     // 获取玩家背包数据
     let bagData = await getPlayerBagData(userId);
-    
+
     if (!bagData) {
       // 如果背包不存在，创建初始背包
       const playerData = await getPlayerXKData(userId);
-      
+
       if (!playerData) {
         return false;
       }
@@ -178,6 +186,7 @@ async function handleItemAdd(userId: string, itemName: string, quantity: number)
 
     // 根据物品类型确定分类
     let category = '消耗';
+
     if (itemData.type) {
       if (itemData.type.includes('装备') || itemData.type.includes('武器')) {
         category = '装备';
@@ -191,10 +200,9 @@ async function handleItemAdd(userId: string, itemName: string, quantity: number)
     }
 
     // 查找背包中是否已有该物品
-    const existingItem = bagData[category].find((item: any) => 
-      item.name === itemName || 
-      item.名称 === itemName || 
-      item.itemName === itemName
+    const existingItem = bagData[category].find((item: any) => item.name === itemName
+      || item.名称 === itemName
+      || item.itemName === itemName
     );
 
     if (existingItem) {
@@ -217,6 +225,7 @@ async function handleItemAdd(userId: string, itemName: string, quantity: number)
     return await savePlayerBagData(userId, bagData);
   } catch (error) {
     console.error('处理物品添加到背包失败:', error);
+
     return false;
   }
 }
@@ -228,6 +237,7 @@ const res = onResponse(selects, async e => {
   // 检查玩家是否存在
   if (!(await existplayer(userId))) {
     void Send(Text('请先在修仙系统中注册！'));
+
     return false;
   }
 
@@ -236,14 +246,16 @@ const res = onResponse(selects, async e => {
 
   if (!xkPlayerDataStr) {
     void Send(Text('请先进入侠客江湖！'));
+
     return false;
   }
 
   // 解析指令
   const match = e.MessageText.match(/^(#|＃|\/)?侠客获得(.*)\*(\d+)$/);
-  
+
   if (!match) {
     void Send(Text('格式错误！正确格式：侠客获得物品名称*数量'));
+
     return false;
   }
 
@@ -252,6 +264,7 @@ const res = onResponse(selects, async e => {
 
   if (!itemName) {
     void Send(Text('物品名称不能为空！'));
+
     return false;
   }
 
@@ -259,6 +272,7 @@ const res = onResponse(selects, async e => {
 
   if (quantity <= 0) {
     void Send(Text('数量必须大于0！'));
+
     return false;
   }
 
@@ -269,20 +283,21 @@ const res = onResponse(selects, async e => {
   // 处理铜钱逻辑
   if (itemName === '铜钱' || itemName === '铜币') {
     const success = await handleMoneyAdd(userId, finalQuantity);
-    
+
     if (success) {
       const playerData = await getPlayerXKData(userId);
+
       void Send(Text(`GM指令执行成功！获得铜钱*${finalQuantity}\n当前铜钱：${playerData?.money || 0}`));
     } else {
       void Send(Text('GM指令执行失败！请检查系统状态。'));
     }
-    
+
     return false;
   }
 
   // 处理普通物品逻辑
   const success = await handleItemAdd(userId, itemName, finalQuantity);
-  
+
   if (success) {
     void Send(Text(`GM指令执行成功！获得${itemName}*${finalQuantity}`));
   } else {

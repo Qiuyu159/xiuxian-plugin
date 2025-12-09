@@ -222,9 +222,11 @@ export async function generateXKId(): Promise<string> {
 export async function isPlayerRegistered(userId: string): Promise<boolean> {
   try {
     const existingPlayerData = await redis.get(`xk_player_data:${userId}`);
+
     return !!existingPlayerData;
   } catch (error) {
     console.error('检查玩家注册状态失败:', error);
+
     return false;
   }
 }
@@ -235,7 +237,7 @@ export async function isPlayerRegistered(userId: string): Promise<boolean> {
 export async function getPlayerXKData(userId: string): Promise<XKPlayerData | null> {
   try {
     const playerDataStr = await redis.get(`xk_player_data:${userId}`);
-    
+
     if (!playerDataStr) {
       return null;
     }
@@ -243,6 +245,7 @@ export async function getPlayerXKData(userId: string): Promise<XKPlayerData | nu
     return JSON.parse(playerDataStr) as XKPlayerData;
   } catch (error) {
     console.error('获取玩家侠客数据失败:', error);
+
     return null;
   }
 }
@@ -253,9 +256,11 @@ export async function getPlayerXKData(userId: string): Promise<XKPlayerData | nu
 export async function isPlayerInCultivationSystem(userId: string): Promise<boolean> {
   try {
     const ex = await redis.exists(keys.player(userId));
+
     return ex === 1;
   } catch (error) {
     console.error('检查修仙系统注册状态失败:', error);
+
     return false;
   }
 }
@@ -266,7 +271,7 @@ export async function isPlayerInCultivationSystem(userId: string): Promise<boole
 export async function getCultivationPlayerData(userId: string): Promise<any> {
   try {
     const playerDataStr = await redis.get(keys.player(userId));
-    
+
     if (!playerDataStr) {
       return null;
     }
@@ -274,6 +279,7 @@ export async function getCultivationPlayerData(userId: string): Promise<any> {
     return JSON.parse(playerDataStr);
   } catch (error) {
     console.error('获取修仙系统玩家数据失败:', error);
+
     return null;
   }
 }
@@ -294,7 +300,7 @@ export async function registerNewXKPlayer(userId: string): Promise<{
 
     // 获取修仙系统玩家数据
     const cultivationPlayerData = await getCultivationPlayerData(userId);
-    
+
     if (!cultivationPlayerData) {
       return { success: false, error: '获取玩家信息失败，请稍后重试！' };
     }
@@ -353,6 +359,7 @@ export async function registerNewXKPlayer(userId: string): Promise<{
     return { success: true, playerData: playerDataXK };
   } catch (error) {
     console.error('侠客注册失败:', error);
+
     return { success: false, error: '侠客注册失败，请稍后重试！' };
   }
 }
