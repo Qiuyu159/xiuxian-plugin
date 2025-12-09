@@ -97,7 +97,7 @@ async function generateEquipmentId(uid: string): Promise<string> {
     // 解析编号格式：eq_数字
     const match = equipmentData.id.match(/^eq_(\d+)$/);
 
-    if (match && match[1]) {
+    if (match?.[1]) {
       const num = parseInt(match[1]);
 
       if (!isNaN(num)) {
@@ -150,7 +150,7 @@ async function generateXKId(): Promise<string> {
     // 解析编号格式：xk_数字 或 xk_数字_其他
     const match = bagData.id.match(/^xk_(\d+)(?:_|$)/);
 
-    if (match && match[1]) {
+    if (match?.[1]) {
       const num = parseInt(match[1]);
 
       if (!isNaN(num)) {
