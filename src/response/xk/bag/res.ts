@@ -47,7 +47,8 @@ const res = onResponse(selects, async e => {
       消耗: [],
       武学: [],
       材料: [],
-      任务: []
+      任务: [],
+      其他: []
     };
 
     // 保存初始背包数据
@@ -73,8 +74,10 @@ const res = onResponse(selects, async e => {
   if (allItems.length > 0) {
     bagMessage += '\n物品列表：\n';
 
-    // 按分类显示物品
-    for (const [category, _items] of Object.entries(ITEM_CATEGORIES)) {
+    // 按分类显示物品 - 包括所有分类和"其他"分类
+    const allCategories = { ...ITEM_CATEGORIES, 其他: [] };
+
+    for (const [category, _items] of Object.entries(allCategories)) {
       const categoryItems = allItems.filter(item => getItemCategory(item.type) === category);
 
       if (categoryItems.length > 0) {
@@ -82,7 +85,24 @@ const res = onResponse(selects, async e => {
 
         categoryItems.forEach((item, index) => {
           if (index < 10) { // 限制显示数量
-            bagMessage += `${item.name} x${item.quantity} (${item.quality})\n`;
+            let itemDisplay = `${item.name} x${item.quantity}`;
+
+            // 显示品质
+            if (item.quality) {
+              itemDisplay += ` (${item.quality})`;
+            }
+
+            // 显示装备唯一ID
+            if (item.uniqueId) {
+              itemDisplay += ` [ID:${item.uniqueId}]`;
+            }
+
+            // 显示锻造数（如果有）
+            if (item.forgeLevel) {
+              itemDisplay += ` [锻造:${item.forgeLevel}]`;
+            }
+
+            bagMessage += itemDisplay + '\n';
           }
         });
 

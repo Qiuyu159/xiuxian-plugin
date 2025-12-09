@@ -28,7 +28,6 @@ const initDataTask = async (): Promise<void> => {
     'XKChapter', // 侠客残页
     'XKItem', // 侠客物品
     'XKGongfa', // 侠客秘籍
-    'XKEquipment', // 侠客装备
     'XKRole', // 侠客角色
     'XKSect' // 侠客门派
   ];

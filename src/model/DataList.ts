@@ -53,7 +53,6 @@ import 侠客天赋 from '../resources/data/xk/侠客天赋.json';
 import 侠客残页 from '../resources/data/xk/侠客残页.json';
 import 侠客物品 from '../resources/data/xk/侠客物品.json';
 import 侠客秘籍 from '../resources/data/xk/侠客秘籍.json';
-import 侠客装备 from '../resources/data/xk/侠客装备.json';
 import 侠客角色 from '../resources/data/xk/侠客角色.json';
 import 侠客门派 from '../resources/data/xk/侠客门派.json';
 import type { TalentItem, LevelStageItem, PhysiqueStageItem, CommodityItem, GongfaItem, EquipmentTuzhiItem, PetItem, PetFoodItem } from '../types/data';
@@ -129,7 +128,6 @@ export const DATA_LIST = {
   XKChapter: 侠客残页,
   XKItem: 侠客物品,
   XKGongfa: 侠客秘籍,
-  XKEquipment: 侠客装备,
   XKRole: 侠客角色,
   XKSect: 侠客门派
 };
@@ -258,7 +256,6 @@ export default {
   xk_chapter_list: 侠客残页 as any[],
   xk_item_list: 侠客物品 as any[],
   xk_gongfa_list: 侠客秘籍 as any[],
-  xk_equipment_list: 侠客装备 as any[],
   xk_role_list: 侠客角色 as any[],
   xk_sect_list: 侠客门派 as any[]
 };

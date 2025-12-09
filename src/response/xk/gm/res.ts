@@ -3,6 +3,7 @@ import { redis } from '@src/model/api';
 import { existplayer } from '@src/model/index';
 import { selects } from '@src/response/mw-captcha';
 import { onResponse } from 'alemonjs';
+import { addItemToBag, getPlayerBag, savePlayerBag, BagData, getItemCategory } from '@src/model/xk/bag';
 
 /**
  * GM指令：侠客获得物品名称*数量
@@ -86,15 +87,9 @@ async function savePlayerXKData(userId: string, playerData: any): Promise<boolea
 /**
  * 获取玩家背包数据
  */
-async function getPlayerBagData(userId: string): Promise<any> {
+async function getPlayerBagData(userId: string): Promise<BagData | null> {
   try {
-    const bagDataStr = await redis.get(`xk_bag:${userId}`);
-
-    if (!bagDataStr) {
-      return null;
-    }
-
-    return JSON.parse(bagDataStr);
+    return await getPlayerBag(userId);
   } catch (error) {
     console.error('获取玩家背包数据失败:', error);
 
@@ -105,11 +100,9 @@ async function getPlayerBagData(userId: string): Promise<any> {
 /**
  * 保存玩家背包数据
  */
-async function savePlayerBagData(userId: string, bagData: any): Promise<boolean> {
+async function savePlayerBagData(userId: string, bagData: BagData): Promise<boolean> {
   try {
-    await redis.set(`xk_bag:${userId}`, JSON.stringify(bagData));
-
-    return true;
+    return await savePlayerBag(userId, bagData);
   } catch (error) {
     console.error('保存玩家背包数据失败:', error);
 
@@ -161,68 +154,12 @@ async function handleItemAdd(userId: string, itemName: string, quantity: number)
       return false;
     }
 
-    // 获取玩家背包数据
-    let bagData = await getPlayerBagData(userId);
+    // 使用标准化的背包模型添加物品
+    // 从物品数据中获取物品ID，如果没有则使用名称生成
+    const itemId = itemData.id || itemData.itemId || `item_${itemName.replace(/[^a-zA-Z0-9]/g, '_')}`;
 
-    if (!bagData) {
-      // 如果背包不存在，创建初始背包
-      const playerData = await getPlayerXKData(userId);
-
-      if (!playerData) {
-        return false;
-      }
-
-      bagData = {
-        id: playerData.id || userId,
-        uid: userId,
-        名号: playerData.名号,
-        装备: [],
-        消耗: [],
-        武学: [],
-        材料: [],
-        任务: []
-      };
-    }
-
-    // 根据物品类型确定分类
-    let category = '消耗';
-
-    if (itemData.type) {
-      if (itemData.type.includes('装备') || itemData.type.includes('武器')) {
-        category = '装备';
-      } else if (itemData.type.includes('武学') || itemData.type.includes('秘籍')) {
-        category = '武学';
-      } else if (itemData.type.includes('材料')) {
-        category = '材料';
-      } else if (itemData.type.includes('任务')) {
-        category = '任务';
-      }
-    }
-
-    // 查找背包中是否已有该物品
-    const existingItem = bagData[category].find((item: any) => item.name === itemName
-      || item.名称 === itemName
-      || item.itemName === itemName
-    );
-
-    if (existingItem) {
-      // 如果已有物品，增加数量
-      existingItem.quantity = (existingItem.quantity || 0) + quantity;
-    } else {
-      // 如果没有物品，添加新物品
-      bagData[category].push({
-        name: itemName,
-        quantity: quantity,
-        quality: itemData.quality || '普通',
-        type: itemData.type || '消耗',
-        description: itemData.description || '',
-        maxStack: itemData.maxStack || 999,
-        buyPrice: itemData.buyPrice || 0,
-        sellPrice: itemData.sellPrice || 0
-      });
-    }
-
-    return await savePlayerBagData(userId, bagData);
+    // 使用背包模型的addItemToBag函数
+    return await addItemToBag(userId, itemId, quantity);
   } catch (error) {
     console.error('处理物品添加到背包失败:', error);
 

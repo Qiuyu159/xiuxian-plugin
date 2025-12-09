@@ -44,6 +44,7 @@ interface BagData {
   武学: BagItem[];
   材料: BagItem[];
   任务: BagItem[];
+  其他: BagItem[];
 }
 
 // 背包信息接口
@@ -105,6 +106,33 @@ function getItemCategory(itemType: string): string {
 }
 
 /**
+ * 从XKItem表中获取物品信息
+ */
+async function getItemInfo(itemId: string): Promise<any> {
+  try {
+    const xkItemData = await redis.get('XKItem');
+
+    if (!xkItemData) {
+      return null;
+    }
+
+    const xkItemList = JSON.parse(xkItemData);
+
+    // 查找物品 - 支持多种可能的字段名
+    const item = xkItemList.find((item: any) => item.id === itemId
+      || item.itemId === itemId
+      || item.name?.replace(/[^a-zA-Z0-9]/g, '_') === String(itemId).replace('item_', '')
+    );
+
+    return item || null;
+  } catch (error) {
+    console.error('获取物品信息失败:', error);
+
+    return null;
+  }
+}
+
+/**
  * 添加物品到背包
  */
 async function addItemToBag(userId: string, itemId: string, quantity = 1, uniqueId: string | null = null): Promise<boolean> {
@@ -140,21 +168,21 @@ async function addItemToBag(userId: string, itemId: string, quantity = 1, unique
       消耗: [],
       武学: [],
       材料: [],
-      任务: []
+      任务: [],
+      其他: []
     };
   }
 
-  // 这里需要从物品数据库获取物品信息
-  // 暂时使用模拟数据
-  const itemInfo = {
-    id: itemId,
-    name: `物品${itemId}`,
-    type: '道具',
-    quality: '白',
-    maxStack: 999
-  };
+  // 从物品数据库获取物品信息
+  const itemInfo = await getItemInfo(itemId);
 
-  const category = getItemCategory(itemInfo.type);
+  // 如果没有找到物品信息，使用默认值
+  const itemName = itemInfo?.name || itemInfo?.名称 || `物品${String(itemId).replace('item_', '')}`;
+  const itemType = itemInfo?.type || itemInfo?.物品类型 || '道具';
+  const itemQuality = itemInfo?.quality || itemInfo?.品质 || '白';
+  const itemMaxStack = itemInfo?.maxStack || itemInfo?.最大堆叠 || 999;
+
+  const category = getItemCategory(itemType);
 
   // 确保分类存在
   if (!bagData[category as keyof BagData]) {
@@ -168,9 +196,9 @@ async function addItemToBag(userId: string, itemId: string, quantity = 1, unique
     const equipmentItem: BagItem = {
       id: itemId,
       uniqueId: uniqueId,
-      name: itemInfo.name,
-      type: itemInfo.type,
-      quality: itemInfo.quality,
+      name: itemName,
+      type: itemType,
+      quality: itemQuality,
       quantity: 1,
       equipped: false,
       equippedTo: null
@@ -182,21 +210,21 @@ async function addItemToBag(userId: string, itemId: string, quantity = 1, unique
     const existingItem = categoryItems.find(item => item.id === itemId && !item.uniqueId
     );
 
-    if (existingItem && itemInfo.maxStack && itemInfo.maxStack > 1) {
+    if (existingItem && itemMaxStack && itemMaxStack > 1) {
       // 可堆叠物品
       existingItem.quantity += quantity;
-      if (existingItem.quantity > itemInfo.maxStack) {
-        existingItem.quantity = itemInfo.maxStack;
+      if (existingItem.quantity > itemMaxStack) {
+        existingItem.quantity = itemMaxStack;
       }
     } else {
       // 新物品或不可堆叠物品
       const newItem: BagItem = {
         id: itemId,
-        name: itemInfo.name,
-        type: itemInfo.type,
-        quality: itemInfo.quality,
+        name: itemName,
+        type: itemType,
+        quality: itemQuality,
         quantity: quantity,
-        maxStack: itemInfo.maxStack || 1
+        maxStack: itemMaxStack || 1
       };
 
       categoryItems.push(newItem);
@@ -219,14 +247,13 @@ async function removeItemFromBag(userId: string, itemId: string, quantity = 1, u
     return false;
   }
 
-  // 这里需要从物品数据库获取物品信息
-  // 暂时使用模拟数据
-  const itemInfo = {
-    id: itemId,
-    type: '道具'
-  };
+  // 从物品数据库获取物品信息
+  const itemInfo = await getItemInfo(itemId);
 
-  const category = getItemCategory(itemInfo.type);
+  // 如果没有找到物品信息，使用默认值
+  const itemType = itemInfo?.type || itemInfo?.物品类型 || '道具';
+
+  const category = getItemCategory(itemType);
 
   if (!bagData[category as keyof BagData]) {
     console.error(`玩家 ${userId} 的 ${category} 分类不存在`);

@@ -2,6 +2,7 @@ import { Text, useSend } from 'alemonjs';
 import { redis } from '@src/model/api';
 import { existplayer } from '@src/model/index';
 import { selects } from '@src/response/mw-captcha';
+import { addItemToBag, removeItemFromBag, getPlayerBag, getBagItems } from '@src/model/xk/bag';
 
 export const regular = /^(#|＃|\/)?(开封|杭州|广州|大理|京城)?(购买|出售)((.*)|(.*)*(.*))$/;
 
@@ -126,20 +127,17 @@ const res = onResponse(selects, async e => {
     // 更新玩家数据
     xkPlayerData.money = tongbi - totalPrice;
 
-    // 更新背包
-    if (!xkPlayerData.背包) {
-      xkPlayerData.背包 = [];
-    }
+    // 使用标准化的背包模型添加物品
+    // 从物品数据中获取物品ID，如果没有则使用名称生成
+    const itemId = goods.id || goods.itemId || `item_${itemName.replace(/[^a-zA-Z0-9]/g, '_')}`;
 
-    const existingItem = xkPlayerData.背包.find((item: any) => item.name === itemName);
+    // 添加物品到背包
+    const addResult = await addItemToBag(userId, itemId, qty);
 
-    if (existingItem) {
-      existingItem.quantity = (existingItem.quantity || 0) + qty;
-    } else {
-      xkPlayerData.背包.push({
-        name: itemName,
-        quantity: qty
-      });
+    if (!addResult) {
+      void Send(Text('购买失败，背包操作异常'));
+
+      return false;
     }
 
     await redis.set(`xk_player_data:${userId}`, JSON.stringify(xkPlayerData));
@@ -162,13 +160,28 @@ const res = onResponse(selects, async e => {
     }
 
     // 检查背包是否有足够物品
-    if (!xkPlayerData.背包) {
-      xkPlayerData.背包 = [];
+    // 从物品数据中获取物品ID，如果没有则使用名称生成
+    const itemId = goods.id || goods.itemId || `item_${itemName.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+    // 检查背包中是否有足够的物品
+    const bagItems = await getBagItems(userId);
+
+    if (!bagItems || bagItems.length === 0) {
+      void Send(Text(`背包中没有足够的 ${itemName} 用于出售`));
+
+      return false;
     }
 
-    const existingItem = xkPlayerData.背包.find((item: any) => item.name === itemName);
+    // 检查物品数量
+    let totalQuantity = 0;
 
-    if (!existingItem || existingItem.quantity < qty) {
+    bagItems.forEach(item => {
+      if (item.id === itemId) {
+        totalQuantity += item.quantity || 0;
+      }
+    });
+
+    if (totalQuantity < qty) {
       void Send(Text(`背包中没有足够的 ${itemName} 用于出售`));
 
       return false;
@@ -177,10 +190,13 @@ const res = onResponse(selects, async e => {
     // 更新玩家数据
     xkPlayerData.money = tongbi + totalPrice;
 
-    // 更新背包
-    existingItem.quantity -= qty;
-    if (existingItem.quantity <= 0) {
-      xkPlayerData.背包 = xkPlayerData.背包.filter((item: any) => item.name !== itemName);
+    // 从背包中移除物品
+    const removeResult = await removeItemFromBag(userId, itemId, qty);
+
+    if (!removeResult) {
+      void Send(Text('出售失败，背包操作异常'));
+
+      return false;
     }
 
     await redis.set(`xk_player_data:${userId}`, JSON.stringify(xkPlayerData));
