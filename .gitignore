@@ -22,3 +22,6 @@ mysql-connector-j-9.1.0
 .eslintcache
 /redis-data
 /mysql-data
+/mysql-init
+/alemon.config.yaml
+/node_modules

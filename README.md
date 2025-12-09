@@ -13,13 +13,13 @@
 地址
 
 ```sh
-https://github.com/Qiuyu159/xiuxian-plugin.git
+https://github.com/xiuxianjs/xiuxian-plugin.git
 ```
 
 > 若访问受限，可使用如下加速地址
 
 ```sh
-https://ghfast.top/https://github.com/Qiuyu159/xiuxian-plugin.git
+https://ghfast.top/https://github.com/xiuxianjs/xiuxian-plugin.git
 ```
 
 分支
@@ -109,12 +109,12 @@ alemonjs-xiuxian:
 | [version/1.2]🔗  |        | yunzai-bot 版 修仙v1.2 |
 | [version/1.3]🔗  |        | yunzai-bot 版 修仙v1.3 |
 
-[yunzaijs/1.2]: https://github.com/Qiuyu159/xiuxian-plugin/tree/yunzaijs/1.2
-[version/1.2]: https://github.com/Qiuyu159/xiuxian-plugin/tree/version/1.2
-[version/1.3]: https://github.com/Qiuyu159/xiuxian-plugin/tree/version/1.3
+[yunzaijs/1.2]: https://github.com/xiuxianjs/xiuxian-plugin/tree/yunzaijs/1.2
+[version/1.2]: https://github.com/xiuxianjs/xiuxian-plugin/tree/version/1.2
+[version/1.3]: https://github.com/xiuxianjs/xiuxian-plugin/tree/version/1.3
 
 ## 贡献
 
-<a href="https://github.com/Qiuyu159/xiuxian-plugin/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Qiuyu159/xiuxian-plugin" />
+<a href="https://github.com/xiuxianjs/xiuxian-plugin/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=xiuxianjs/xiuxian-plugin" />
 </a>
