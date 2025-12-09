@@ -136,7 +136,12 @@ const task = {
    * 存在订阅推送。
    */
   // 拍卖任务
-  AuctionofficialTask: '0 0/1 * * * ?'
+  AuctionofficialTask: '0 0/1 * * * ?',
+  /**
+   * **********
+   * 数据初始化任务 - 项目启动时执行一次，不设置定时执行
+   */
+  InitDataTask: ''
 };
 
 const bossTime = {

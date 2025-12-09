@@ -2,6 +2,7 @@ import { getAppConfig } from './model';
 import { initPostlog } from './model/posthog';
 import { initDefaultAdmin } from './route/core/auth';
 import { startAllTasks } from './task/index';
+import { startInitDataTask } from './task/initDataTask';
 
 // 导入响应模块
 import responseModules from './response';
@@ -14,10 +15,6 @@ export default defineChildren({
     // 初始化默认管理员
     initDefaultAdmin().catch(error => {
       logger.error('初始化默认管理员失败:', error);
-    });
-    // 注册所有响应模块
-    responseModules.forEach(module => {
-      logger.debug('注册响应模块:', module?.name || 'anonymous');
     });
     // task是否关闭启动，使用框架层配置
     const value = getAppConfig();
@@ -32,5 +29,11 @@ export default defineChildren({
         logger.error('启动定时任务失败:', error);
       });
     }
-  }
+
+    // 项目启动时执行一次数据初始化任务
+    startInitDataTask().catch(error => {
+      logger.error('启动数据初始化任务失败:', error);
+    });
+  },
+  response: responseModules
 });

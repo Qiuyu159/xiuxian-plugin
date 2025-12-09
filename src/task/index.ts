@@ -10,6 +10,7 @@ import { TaskMap } from '@src/model/task';
 import { ActionsTask } from './actions/actionsTask';
 import { TaskKeys } from '@src/config/xiuxian';
 import { PushMessageTask } from './pushMessageTask';
+import { InitDataTask } from './initDataTask';
 
 // 任务函数映射
 const taskFunctions: {
@@ -22,7 +23,8 @@ const taskFunctions: {
   AuctionofficialTask: AuctionofficialTask,
   ForumTask: ForumTask,
   ShopGradetask: ShopGradetask,
-  TiandibangTask: TiandibangTask
+  TiandibangTask: TiandibangTask,
+  InitDataTask: InitDataTask
 };
 
 // 停止指定任务
@@ -124,7 +126,13 @@ export const startAllTasks = async () => {
     const failedTasks: string[] = [];
 
     // 启动所有配置的任务
-    for (const [taskName] of Object.entries(taskConfig)) {
+    for (const [taskName, cronExpression] of Object.entries(taskConfig)) {
+      // 跳过空字符串的定时任务（如InitDataTask，只在启动时执行一次）
+      if (!cronExpression || cronExpression.trim() === '') {
+        logger.debug(`跳过空定时表达式的任务: ${taskName}`);
+        continue;
+      }
+
       if (!TaskMap.has(taskName)) {
         const result = await startSingleTask(taskName);
 

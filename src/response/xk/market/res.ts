@@ -98,7 +98,7 @@ const res = onResponse(selects, async e => {
     qty = MAX_QTY;
   }
 
-  const tongbi = Number(xkPlayerData.铜币) || 0;
+  const tongbi = Number(xkPlayerData.money) || 0;
 
   if (operation === '购买') {
     // 购买逻辑 - 支持多种可能的购买价格字段名
@@ -124,7 +124,7 @@ const res = onResponse(selects, async e => {
     }
 
     // 更新玩家数据
-    xkPlayerData.铜币 = tongbi - totalPrice;
+    xkPlayerData.money = tongbi - totalPrice;
 
     // 更新背包
     if (!xkPlayerData.背包) {
@@ -175,7 +175,7 @@ const res = onResponse(selects, async e => {
     }
 
     // 更新玩家数据
-    xkPlayerData.铜币 = tongbi + totalPrice;
+    xkPlayerData.money = tongbi + totalPrice;
 
     // 更新背包
     existingItem.quantity -= qty;
