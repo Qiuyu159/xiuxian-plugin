@@ -49,6 +49,13 @@ import 锻造杂类 from '../resources/data/item/锻造杂类.json';
 import 技能列表 from '../resources/data/item/技能列表.json';
 import updateRecord from '../resources/data/updateRecord.json';
 import MonthMarket from '../resources/data/item/MothMarket.json';
+import 侠客天赋 from '../resources/data/xk/侠客天赋.json';
+import 侠客残页 from '../resources/data/xk/侠客残页.json';
+import 侠客物品 from '../resources/data/xk/侠客物品.json';
+import 侠客秘籍 from '../resources/data/xk/侠客秘籍.json';
+import 侠客装备 from '../resources/data/xk/侠客装备.json';
+import 侠客角色 from '../resources/data/xk/侠客角色.json';
+import 侠客门派 from '../resources/data/xk/侠客门派.json';
 import type { TalentItem, LevelStageItem, PhysiqueStageItem, CommodityItem, GongfaItem, EquipmentTuzhiItem, PetItem, PetFoodItem } from '../types/data';
 import type {
   MonsterItem,
@@ -117,7 +124,14 @@ export const DATA_LIST = {
   Zalei: 锻造杂类,
   Jineng: 技能列表,
   UpdateRecord: updateRecord,
-  MonthMarket: MonthMarket
+  MonthMarket: MonthMarket,
+  XKTalent: 侠客天赋,
+  XKChapter: 侠客残页,
+  XKItem: 侠客物品,
+  XKGongfa: 侠客秘籍,
+  XKEquipment: 侠客装备,
+  XKRole: 侠客角色,
+  XKSect: 侠客门派
 };
 
 export type DataList = typeof DATA_LIST;
@@ -236,5 +250,15 @@ export default {
    */
   jineng1: 技能列表1 as SkillItem[],
   jineng2: 技能列表2 as SkillItem[],
-  jineng: 技能列表 as SkillItem[]
+  jineng: 技能列表 as SkillItem[],
+  /**
+   * 侠客数据列表
+   */
+  xk_talent_list: 侠客天赋 as any[],
+  xk_chapter_list: 侠客残页 as any[],
+  xk_item_list: 侠客物品 as any[],
+  xk_gongfa_list: 侠客秘籍 as any[],
+  xk_equipment_list: 侠客装备 as any[],
+  xk_role_list: 侠客角色 as any[],
+  xk_sect_list: 侠客门派 as any[]
 };

@@ -176,7 +176,102 @@ export interface XiuxianDataShape {
   duanzhaobaowu: ForgingEquipItem[];
   yincang: HiddenTalentItem[];
   zalei: ForgingEquipItem[];
-  jineng: SkillItem[];
+  jineng: SkillItem[],
+  /**
+   * 侠客数据列表
+   */
+  xk_talent_list: XKTalentItem[],
+  xk_chapter_list: XKChapterItem[],
+  xk_item_list: XKItemItem[],
+  xk_gongfa_list: XKGongfaItem[],
+  xk_equipment_list: XKEquipmentItem[],
+  xk_role_list: XKRoleItem[],
+  xk_sect_list: XKSectItem[]
+};
+
+// 侠客天赋类型定义
+export interface XKTalentItem {
+  id: number | string;
+  name: string;
+  type: string | null;
+  quality: string;
+  description: string;
+  effects: Record<string, any>;
 }
 
+// 侠客残页类型定义
+export interface XKChapterItem {
+  id: number;
+  name: string;
+  quality: string;
+  description: string;
+}
+
+// 侠客物品类型定义
+export interface XKItemItem {
+  id: number;
+  name: string;
+  quality: string;
+  type: string;
+  maxStack: number;
+  stackSize: number;
+  buyPrice: number;
+  sellPrice: number;
+  description: string;
+}
+
+// 侠客秘籍类型定义
+export interface XKGongfaItem {
+  id: number;
+  name: string;
+  quality: string;
+  description: string;
+}
+
+// 侠客装备类型定义
+export interface XKEquipmentItem {
+  id: number;
+  category: string;
+  name: string;
+  quality: string;
+  image: string;
+  description: string;
+  forgeData: Array<{
+    forgeLevel: number;
+    talentName: string;
+    talentDesc: string;
+  }>;
+}
+
+// 侠客角色类型定义
+export interface XKRoleItem {
+  id: number;
+  Roleid: number;
+  name: string;
+  quality: string;
+  gender: string;
+  avatar: number;
+  roleType: string | null;
+  description: string | null;
+  breakthrough: string | null;
+  faction: string | null;
+  equipment: any[];
+}
+
+// 侠客门派类型定义
+export interface XKSectItem {
+  id: number;
+  name: string;
+  description: string;
+  specialty: string;
+  attributes: {
+    力道: number;
+    体质: number;
+    灵巧: number;
+    悟性: number;
+    内劲: number;
+  };
+  skills: string[];
+  tianfus: string[];
+}
 export type DataAccessor = XiuxianDataShape & {};
