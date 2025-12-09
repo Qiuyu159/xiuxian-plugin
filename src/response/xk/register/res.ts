@@ -5,8 +5,8 @@ import { keys } from '@src/model/keys';
 import { selects } from '@src/response/mw-captcha';
 import mw from '@src/response/mw-captcha';
 
-// 侠客注册正则表达式 - 使用"进入侠客江湖"作为触发词
-export const regular = /^(#|＃|\/)?进入侠客江湖$/;
+// 侠客注册正则表达式 - 支持"我的侠客"、"侠客信息"和"进入侠客江湖"作为触发词
+export const regular = /^(#|＃|\/)?(我的侠客|侠客信息|进入侠客江湖)$/;
 
 /**
  * 获取所有侠客背包数据，用于编号排序
@@ -189,9 +189,14 @@ async function generateXKId(): Promise<string> {
 const res = onResponse(selects, async e => {
   const Send = useSend(e);
   const userId = e.UserId;
+  const message = e.message;
 
   // 检查玩家是否已在侠客江湖注册过（检查xk_player_data表）
   const existingPlayerData = await redis.get(`xk_player_data:${userId}`);
+
+  // 判断触发词类型 - 使用精确匹配
+  const isInfoCommand = /^(#|＃|\/)?(我的侠客|侠客信息)$/.test(message);
+  const isRegisterCommand = /^(#|＃|\/)?进入侠客江湖$/.test(message);
 
   if (existingPlayerData) {
     // 玩家已注册，直接显示玩家信息
@@ -211,90 +216,100 @@ const res = onResponse(selects, async e => {
     }
   }
 
-  const ex = await redis.exists(keys.player(userId));
-
-  if (ex === 0) {
-    void Send(Text('请先在修仙系统中注册！'));
-
-    return false;
-  }
-
-  // 获取发送者的名号
-  const player = await redis.get(keys.player(userId));
-
-  if (!player) {
-    void Send(Text('获取玩家信息失败，请稍后重试！'));
+  // 如果是信息查询命令但玩家未注册
+  if (isInfoCommand) {
+    void Send(Text('您尚未在侠客江湖注册，请使用"进入侠客江湖"命令进行注册！'));
 
     return false;
   }
 
-  // 解析玩家数据
-  const playerData = JSON.parse(player);
+  // 如果是注册命令，继续执行注册流程
+  if (isRegisterCommand) {
+    const ex = await redis.exists(keys.player(userId));
 
-  // 生成侠客编号（使用复杂排序规则）
-  const xkId = await generateXKId();
+    if (ex === 0) {
+      void Send(Text('请先在修仙系统中注册！'));
 
-  // 创建玩家数据（按照要求的格式）
-  const playerDataXK = {
-    id: userId,
-    名号: playerData.名号,
-    money: 0,
-    level: 1
-  };
+      return false;
+    }
 
-  // 创建背包数据
-  const bagData = {
-    id: xkId,
-    uid: userId,
-    名号: playerData.名号,
-    装备: [],
-    消耗: [],
-    武学: [],
-    材料: [],
-    任务: []
-  };
+    // 获取发送者的名号
+    const player = await redis.get(keys.player(userId));
 
-  // 创建初始装备
-  const equipmentData = {
-    id: await generateEquipmentId(userId),
-    UID: userId,
-    名号: playerData.名号,
-    name: '主角',
-    registeredTime: new Date().toISOString(),
-    part: 'weapon',
-    equipment: [
-      {
-        id: 412102,
-        name: '木剑',
-        quality: '白',
-        type: '剑',
-        maxStack: 999,
-        stackSize: 1,
-        buyPrice: 320,
-        sellPrice: 32,
-        description: null
-      }
-    ]
-  };
+    if (!player) {
+      void Send(Text('获取玩家信息失败，请稍后重试！'));
 
-  // 写入数据到Redis
-  try {
-    // 写入玩家数据（使用xk_player_data表名）
-    await redis.set(`xk_player_data:${userId}`, JSON.stringify(playerDataXK));
+      return false;
+    }
 
-    // 写入装备数据（使用xk_Equipment表名，使用userId+xkId组合键避免冲突）
-    await redis.set(`xk_Equipment:${userId}:${xkId}`, JSON.stringify(equipmentData));
+    // 解析玩家数据
+    const playerData = JSON.parse(player);
 
-    // 写入背包数据（使用xk_bag表名）
-    await redis.set(`xk_bag:${userId}`, JSON.stringify(bagData));
+    // 生成侠客编号（使用复杂排序规则）
+    const xkId = await generateXKId();
 
-    // 生成欢迎消息（与已注册玩家显示格式保持一致）
-    const welcomeMessage = `------侠客江湖------\n玩家ID：${playerDataXK.id}\n玩家名称：${playerDataXK.名号}\n玩家铜币：${playerDataXK.money}\n玩家周目：${playerDataXK.level}`;
+    // 创建玩家数据（按照要求的格式）
+    const playerDataXK = {
+      id: userId,
+      名号: playerData.名号,
+      money: 0,
+      level: 1
+    };
 
-    void Send(Text(welcomeMessage));
-  } catch (error) {
-    console.error('侠客注册失败:', error);
-    void Send(Text('侠客注册失败，请稍后重试！'));
+    // 创建背包数据
+    const bagData = {
+      id: xkId,
+      uid: userId,
+      名号: playerData.名号,
+      装备: [],
+      消耗: [],
+      武学: [],
+      材料: [],
+      任务: []
+    };
+
+    // 创建初始装备
+    const equipmentData = {
+      id: await generateEquipmentId(userId),
+      UID: userId,
+      名号: playerData.名号,
+      name: '主角',
+      registeredTime: new Date().toISOString(),
+      part: 'weapon',
+      equipment: [
+        {
+          id: 412102,
+          name: '木剑',
+          quality: '白',
+          type: '剑',
+          maxStack: 999,
+          stackSize: 1,
+          buyPrice: 320,
+          sellPrice: 32,
+          description: null
+        }
+      ]
+    };
+
+    // 写入数据到Redis
+    try {
+      // 写入玩家数据（使用xk_player_data表名）
+      await redis.set(`xk_player_data:${userId}`, JSON.stringify(playerDataXK));
+
+      // 写入装备数据（使用xk_Equipment表名，使用userId+xkId组合键避免冲突）
+      await redis.set(`xk_Equipment:${userId}:${xkId}`, JSON.stringify(equipmentData));
+
+      // 写入背包数据（使用xk_bag表名）
+      await redis.set(`xk_bag:${userId}`, JSON.stringify(bagData));
+
+      // 生成欢迎消息（与已注册玩家显示格式保持一致）
+      const welcomeMessage = `------侠客江湖------\n玩家ID：${playerDataXK.id}\n玩家名称：${playerDataXK.名号}\n玩家铜币：${playerDataXK.money}\n玩家周目：${playerDataXK.level}`;
+
+      void Send(Text(welcomeMessage));
+    } catch (error) {
+      console.error('侠客注册失败:', error);
+      void Send(Text('侠客注册失败，请稍后重试！'));
+    }
   }
 
   return false;

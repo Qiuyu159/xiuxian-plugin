@@ -2,6 +2,10 @@ import { getAppConfig } from './model';
 import { initPostlog } from './model/posthog';
 import { initDefaultAdmin } from './route/core/auth';
 import { startAllTasks } from './task/index';
+
+// 导入响应模块
+import responseModules from './response';
+
 export default defineChildren({
   onCreated() {
     logger.info('修仙扩展启动');
@@ -10,6 +14,10 @@ export default defineChildren({
     // 初始化默认管理员
     initDefaultAdmin().catch(error => {
       logger.error('初始化默认管理员失败:', error);
+    });
+    // 注册所有响应模块
+    responseModules.forEach(module => {
+      logger.debug('注册响应模块:', module?.name || 'anonymous');
     });
     // task是否关闭启动，使用框架层配置
     const value = getAppConfig();
