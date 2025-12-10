@@ -8,6 +8,7 @@ import xkRegisterResponse from './xk/register/res';
 import xkRegisterInfoResponse from './xk/register_info/res';
 import xkBagResponse from './xk/bag/res';
 import xkMarketResponse from './xk/market/res';
+import xkGiveResponse from './xk/give/res';
 
 // 导入用户相关响应模块
 import userStartNewbieResponse from './User/UserStart/newbie/res';
@@ -22,6 +23,7 @@ export default [
   xkRegisterInfoResponse,
   xkBagResponse,
   xkMarketResponse,
+  xkGiveResponse,
   userStartNewbieResponse,
   adminSuperUpdateRecordResponse
 ];

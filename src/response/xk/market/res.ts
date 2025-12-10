@@ -2,7 +2,7 @@ import { Text, useSend } from 'alemonjs';
 import { redis } from '@src/model/api';
 import { existplayer } from '@src/model/index';
 import { selects } from '@src/response/mw-captcha';
-import { addItemToBag, removeItemFromBag, getPlayerBag, getBagItems } from '@src/model/xk/bag';
+import { addItemToBag, removeItemFromBag, getBagItems } from '@src/model/xk/bag';
 
 export const regular = /^(#|＃|\/)?(开封|杭州|广州|大理|京城)?(购买|出售)((.*)|(.*)*(.*))$/;
 

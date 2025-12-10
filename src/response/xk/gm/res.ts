@@ -3,7 +3,7 @@ import { redis } from '@src/model/api';
 import { existplayer } from '@src/model/index';
 import { selects } from '@src/response/mw-captcha';
 import { onResponse } from 'alemonjs';
-import { addItemToBag, getPlayerBag, savePlayerBag, BagData, getItemCategory } from '@src/model/xk/bag';
+import { addItemToBag, getPlayerBag, savePlayerBag, BagData, _getItemCategory } from '@src/model/xk/bag';
 
 /**
  * GM指令：侠客获得物品名称*数量
@@ -87,7 +87,7 @@ async function savePlayerXKData(userId: string, playerData: any): Promise<boolea
 /**
  * 获取玩家背包数据
  */
-async function getPlayerBagData(userId: string): Promise<BagData | null> {
+async function _getPlayerBagData(userId: string): Promise<BagData | null> {
   try {
     return await getPlayerBag(userId);
   } catch (error) {
@@ -100,7 +100,7 @@ async function getPlayerBagData(userId: string): Promise<BagData | null> {
 /**
  * 保存玩家背包数据
  */
-async function savePlayerBagData(userId: string, bagData: BagData): Promise<boolean> {
+async function _savePlayerBagData(userId: string, bagData: BagData): Promise<boolean> {
   try {
     return await savePlayerBag(userId, bagData);
   } catch (error) {

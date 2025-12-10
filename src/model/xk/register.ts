@@ -1,5 +1,7 @@
 import { redis } from '@src/model/api';
 import { keys } from '@src/model/keys';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * 侠客玩家数据结构
@@ -356,6 +358,13 @@ export async function registerNewXKPlayer(userId: string): Promise<{
     await redis.set(`xk_Equipment:${userId}:${xkId}`, JSON.stringify(equipmentData));
     await redis.set(`xk_bag:${userId}`, JSON.stringify(bagData));
 
+    // 添加玩家好感度数据
+    const favorabilitySuccess = await addPlayerFavorabilityData(userId);
+
+    if (!favorabilitySuccess) {
+      console.warn('添加玩家好感度数据失败，但注册过程继续');
+    }
+
     return { success: true, playerData: playerDataXK };
   } catch (error) {
     console.error('侠客注册失败:', error);
@@ -369,6 +378,157 @@ export async function registerNewXKPlayer(userId: string): Promise<{
  */
 export function generatePlayerInfoText(playerData: XKPlayerData): string {
   return `------侠客江湖------\n玩家ID：${playerData.id}\n玩家名称：${playerData.名号}\n玩家铜币：${playerData.money}\n玩家周目：${playerData.level}`;
+}
+
+/**
+ * 获取侠客好感度数据表路径
+ */
+function getFavorabilityDataPath(): string {
+  // 使用项目根目录的相对路径
+  return path.join(process.cwd(), 'src/resources/still_data/xk/侠客角色好感度模版.json');
+}
+
+/**
+ * 检查Redis中是否存在侠客好感度数据表
+ */
+async function checkFavorabilityDataExists(): Promise<boolean> {
+  try {
+    const exists = await redis.exists('xk_favorability_data');
+
+    return exists === 1;
+  } catch (error) {
+    console.error('检查好感度数据表存在性失败:', error);
+
+    return false;
+  }
+}
+
+/**
+ * 从JSON文件加载侠客好感度数据表
+ */
+async function loadFavorabilityDataFromFile(): Promise<Record<string, any> | null> {
+  try {
+    const filePath = getFavorabilityDataPath();
+
+    if (!fs.existsSync(filePath)) {
+      console.error('好感度数据表文件不存在:', filePath);
+
+      return null;
+    }
+
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    const data = JSON.parse(fileContent);
+
+    return data;
+  } catch (error) {
+    console.error('加载好感度数据表失败:', error);
+
+    return null;
+  }
+}
+
+/**
+ * 将好感度数据表保存到Redis
+ */
+async function saveFavorabilityDataToRedis(data: Record<string, any>): Promise<boolean> {
+  try {
+    await redis.set('xk_favorability_data', JSON.stringify(data));
+
+    return true;
+  } catch (error) {
+    console.error('保存好感度数据表到Redis失败:', error);
+
+    return false;
+  }
+}
+
+/**
+ * 从Redis获取好感度数据表
+ */
+async function getFavorabilityDataFromRedis(): Promise<Record<string, any> | null> {
+  try {
+    const dataStr = await redis.get('xk_favorability_data');
+
+    if (!dataStr) {
+      return null;
+    }
+
+    return JSON.parse(dataStr);
+  } catch (error) {
+    console.error('从Redis获取好感度数据表失败:', error);
+
+    return null;
+  }
+}
+
+/**
+ * 为玩家添加好感度数据
+ */
+export async function addPlayerFavorabilityData(userId: string): Promise<boolean> {
+  try {
+    // 检查Redis中是否存在好感度数据表
+    const dataExists = await checkFavorabilityDataExists();
+
+    let favorabilityData: Record<string, any>;
+
+    if (!dataExists) {
+      // 如果不存在，从文件加载数据表
+      const fileData = await loadFavorabilityDataFromFile();
+
+      if (!fileData) {
+        console.error('无法从文件加载好感度数据表');
+
+        return false;
+      }
+
+      // 为每个角色添加该玩家的好感度数据（初始值为0）
+      favorabilityData = { ...fileData };
+      for (const characterName in favorabilityData) {
+        if (favorabilityData.hasOwnProperty(characterName)) {
+          favorabilityData[characterName][userId] = 0;
+        }
+      }
+
+      // 保存到Redis
+      const saveSuccess = await saveFavorabilityDataToRedis(favorabilityData);
+
+      if (!saveSuccess) {
+        console.error('保存好感度数据表到Redis失败');
+
+        return false;
+      }
+    } else {
+      // 如果已存在，从Redis获取数据表
+      favorabilityData = await getFavorabilityDataFromRedis();
+      if (!favorabilityData) {
+        console.error('无法从Redis获取好感度数据表');
+
+        return false;
+      }
+
+      // 为每个角色添加该玩家的好感度数据（初始值为0）
+      for (const characterName in favorabilityData) {
+        if (favorabilityData.hasOwnProperty(characterName)) {
+          favorabilityData[characterName][userId] = 0;
+        }
+      }
+
+      // 保存更新后的数据表
+      const saveSuccess = await saveFavorabilityDataToRedis(favorabilityData);
+
+      if (!saveSuccess) {
+        console.error('更新好感度数据表失败');
+
+        return false;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error('添加玩家好感度数据失败:', error);
+
+    return false;
+  }
 }
 
 /**
