@@ -12,7 +12,7 @@ import { addItemToBag, getPlayerBag, savePlayerBag, BagData, _getItemCategory } 
  * 背包逻辑：如果背包里有物品了，那么直接背包里的物品数量加上加入到背包里的物品数量
  * 如果背包里没有，就直接把对象数据加入到背包里
  */
-export const regular = /^(#|＃|\/)?侠客获得(.*)\*(\d+)$/;
+export const regular = /^(#|＃|\/)?侠客获得\s+(.*)\*(\d+)$/;
 
 /**
  * 将字符串转换为整数
@@ -188,7 +188,7 @@ const res = onResponse(selects, async e => {
   }
 
   // 解析指令
-  const match = e.MessageText.match(/^(#|＃|\/)?侠客获得(.*)\*(\d+)$/);
+  const match = e.MessageText.match(/^(#|＃|\/)?侠客获得\s+(.*)\*(\d+)$/);
 
   if (!match) {
     void Send(Text('格式错误！正确格式：侠客获得物品名称*数量'));

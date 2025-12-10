@@ -9,12 +9,17 @@ import {
 import { selects } from '@src/response/mw-captcha';
 import mw from '@src/response/mw-captcha';
 
-// 侠客信息查询指令正则表达式 - 只处理"我的侠客"和"侠客信息"
-export const infoRegular = /^(#|＃|\/)?(我的侠客|侠客信息)$/;
+// 侠客信息查询指令正则表达式 - 只处理"侠客信息"
+export const infoRegular = /^(#|＃|\/)?侠客信息$/;
 
 const infoResponse = onResponse(selects, async e => {
   const Send = useSend(e);
   const userId = e.UserId;
+
+  // 检查消息是否匹配侠客信息指令
+  if (!infoRegular.test(e.MessageText)) {
+    return true; // 不匹配，继续处理其他模块
+  }
 
   // 检查玩家是否已注册
   const isRegistered = await isPlayerRegistered(userId);

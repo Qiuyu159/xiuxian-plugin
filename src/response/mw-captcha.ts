@@ -2,7 +2,7 @@ import { getIoRedis } from '@alemonjs/db';
 import { getAppConfig, keys } from '@src/model';
 import { generateCaptcha, svgToPngBuffer } from '@src/model/captcha';
 import { baseKey } from '@src/model/keys';
-import { Image, Mention, Text, useMessage } from 'alemonjs';
+import { Image, Mention, Text, useMessage, onResponse, onSelects, format, logger } from 'alemonjs';
 import dayjs from 'dayjs';
 import { isNight, MAX_COUNT, MIN_COUNT, replyCount } from './config';
 import { setIds } from '@src/model/MessageSystem';

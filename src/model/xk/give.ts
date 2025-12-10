@@ -2,15 +2,15 @@ import { redis } from '../api';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// 品质等级映射
-const qualityLevels: Record<string, number> = {
-  白: 1,
-  绿: 2,
-  蓝: 3,
-  紫: 4,
-  橙: 5,
-  金: 6,
-  暗金: 7
+// 材料品质对应好感度点数
+const qualityFavorabilityPoints: Record<string, number> = {
+  白: 5,
+  绿: 6,
+  蓝: 8,
+  紫: 10,
+  橙: 12,
+  金: 12,
+  暗金: 15
 };
 
 // 好感度要求映射 - 不能赠送的品质列表
@@ -168,7 +168,14 @@ async function updatePlayerFavorability(userId: string, characterName: string, f
     const favorabilityData = await redis.get('xk_favorability_data');
 
     if (!favorabilityData) {
-      return false;
+      // 如果好感度数据不存在，创建新的数据结构
+      const newData: Record<string, Record<string, number>> = {};
+
+      newData[characterName] = {};
+      newData[characterName][userId] = favorability;
+      await redis.set('xk_favorability_data', JSON.stringify(newData));
+
+      return true;
     }
 
     const data = JSON.parse(favorabilityData);
@@ -183,7 +190,12 @@ async function updatePlayerFavorability(userId: string, characterName: string, f
       }
     }
 
-    return false;
+    // 如果角色不存在，添加新的角色好感度数据
+    data[characterName] = data[characterName] || {};
+    data[characterName][userId] = favorability;
+    await redis.set('xk_favorability_data', JSON.stringify(data));
+
+    return true;
   } catch (error) {
     console.error('更新玩家好感度失败:', error);
 
@@ -247,9 +259,10 @@ export async function giveItemToCharacter(
     // 查找背包中的物品
     let itemFound = false;
     let itemIndex = -1;
+    let categoryFound = '';
 
-    // 搜索所有物品类型数组
-    const itemTypes = ['weapon', 'armor', 'accessory', 'consumable', 'material'];
+    // 搜索所有物品类型数组（使用侠客背包系统的分类）
+    const itemTypes = ['装备', '消耗', '武学', '材料', '任务', '其他'];
 
     for (const type of itemTypes) {
       if (bagData[type] && Array.isArray(bagData[type])) {
@@ -258,20 +271,21 @@ export async function giveItemToCharacter(
         if (index !== -1) {
           itemFound = true;
           itemIndex = index;
+          categoryFound = type;
 
           // 检查数量是否足够
-          if (bagData[type][index].stackSize < quantity) {
+          if (bagData[type][index].quantity < quantity) {
             return {
               success: false,
-              error: `背包中的${itemName}数量不足！当前数量：${bagData[type][index].stackSize}，需要数量：${quantity}`
+              error: `背包中的${itemName}数量不足！当前数量：${bagData[type][index].quantity}，需要数量：${quantity}`
             };
           }
 
           // 扣除物品数量
-          bagData[type][index].stackSize -= quantity;
+          bagData[type][index].quantity -= quantity;
 
           // 如果数量为0，移除物品
-          if (bagData[type][index].stackSize === 0) {
+          if (bagData[type][index].quantity === 0) {
             bagData[type].splice(index, 1);
           }
 
@@ -291,9 +305,9 @@ export async function giveItemToCharacter(
       return { success: false, error: '更新背包数据失败！' };
     }
 
-    // 计算好感度增加（根据物品品质和数量）
-    const qualityBonus = qualityLevels[item.quality] || 1;
-    const favorabilityIncrease = Math.max(1, Math.floor(qualityBonus * quantity * 0.5));
+    // 计算好感度增加（根据物品品质对应的好感度点数）
+    const favorabilityPoints = qualityFavorabilityPoints[item.quality] || 5;
+    const favorabilityIncrease = favorabilityPoints * quantity;
     const newFavorability = favorability + favorabilityIncrease;
 
     // 更新好感度
