@@ -7,11 +7,12 @@ import captchaResponse from './res';
 import xkRegisterResponse from './xk/register/res';
 import xkRegisterInfoResponse from './xk/register_info/res';
 import xkBagResponse from './xk/bag/res';
-import xkMarketResponse from './xk/market/res';
-import xkGiveResponse from './xk/give/res';
-import xkFavorabilityResponse from './xk/favorability/res';
-import xkBattleResponse from './xk/battle/res';
-import xkZhoumuResponse from './xk/zhoumu/res';
+import xkGmResponse from './xk/gm/res';
+// import xkMarketResponse from './xk/market/res';
+// import xkGiveResponse from './xk/give/res';
+// import xkFavorabilityResponse from './xk/favorability/res';
+// import xkBattleResponse from './xk/battle/res';
+// import xkZhoumuResponse from './xk/zhoumu/res';
 
 // 导入用户相关响应模块
 import userStartNewbieResponse from './User/UserStart/newbie/res';
@@ -25,11 +26,12 @@ export default [
   xkRegisterResponse,
   xkRegisterInfoResponse,
   xkBagResponse,
-  xkMarketResponse,
-  xkGiveResponse,
-  xkFavorabilityResponse,
-  xkBattleResponse,
-  xkZhoumuResponse,
+  xkGmResponse,
+  // xkMarketResponse,
+  // xkGiveResponse,
+  // xkFavorabilityResponse,
+  // xkBattleResponse,
+  // xkZhoumuResponse,
   userStartNewbieResponse,
   adminSuperUpdateRecordResponse
 ];

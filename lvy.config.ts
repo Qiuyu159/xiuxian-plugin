@@ -21,6 +21,13 @@ export default defineConfig({
   build: {
     typescript: {
       removeComments: true
+    },
+    // 保留console.log输出
+    minify: false,
+    terserOptions: {
+      compress: {
+        drop_console: false
+      }
     }
   }
 });

@@ -2,6 +2,7 @@ import { redis } from '@src/model/api';
 import { keys } from '@src/model/keys';
 import * as fs from 'fs';
 import * as path from 'path';
+import { readPlayer } from '../xiuxiandata';
 
 /**
  * 侠客玩家数据结构
@@ -222,15 +223,13 @@ export async function generateXKId(): Promise<string> {
  * 检查玩家是否已在侠客江湖注册
  */
 export async function isPlayerRegistered(userId: string): Promise<boolean> {
-  try {
     const existingPlayerData = await redis.get(`xk_player_data:${userId}`);
 
-    return !!existingPlayerData;
-  } catch (error) {
-    console.error('检查玩家注册状态失败:', error);
+    if (!existingPlayerData) {
+      return false;
+    }
 
-    return false;
-  }
+    return true;
 }
 
 /**
@@ -294,83 +293,71 @@ export async function registerNewXKPlayer(userId: string): Promise<{
   playerData?: XKPlayerData;
   error?: string;
 }> {
-  try {
-    // 检查是否已在修仙系统注册
-    if (!(await isPlayerInCultivationSystem(userId))) {
-      return { success: false, error: '请先在修仙系统中注册！' };
-    }
+  const player = await readPlayer(userId);
 
-    // 获取修仙系统玩家数据
-    const cultivationPlayerData = await getCultivationPlayerData(userId);
-
-    if (!cultivationPlayerData) {
-      return { success: false, error: '获取玩家信息失败，请稍后重试！' };
-    }
-
-    // 生成侠客编号
-    const xkId = await generateXKId();
-
-    // 创建玩家数据
-    const playerDataXK: XKPlayerData = {
-      id: userId,
-      名号: cultivationPlayerData.名号,
-      money: 0,
-      level: 1
-    };
-
-    // 创建背包数据
-    const bagData: XKBagData = {
-      id: xkId,
-      uid: userId,
-      名号: cultivationPlayerData.名号,
-      装备: [],
-      消耗: [],
-      武学: [],
-      材料: [],
-      任务: []
-    };
-
-    // 创建初始装备
-    const equipmentData: XKEquipmentData = {
-      id: await generateEquipmentId(userId),
-      UID: userId,
-      名号: cultivationPlayerData.名号,
-      name: '主角',
-      registeredTime: new Date().toISOString(),
-      part: 'weapon',
-      equipment: [
-        {
-          id: 412102,
-          name: '木剑',
-          quality: '白',
-          type: '剑',
-          maxStack: 999,
-          stackSize: 1,
-          buyPrice: 320,
-          sellPrice: 32,
-          description: null
-        }
-      ]
-    };
-
-    // 写入数据到Redis
-    await redis.set(`xk_player_data:${userId}`, JSON.stringify(playerDataXK));
-    await redis.set(`xk_Equipment:${userId}:${xkId}`, JSON.stringify(equipmentData));
-    await redis.set(`xk_bag:${userId}`, JSON.stringify(bagData));
-
-    // 添加玩家好感度数据
-    const favorabilitySuccess = await addPlayerFavorabilityData(userId);
-
-    if (!favorabilitySuccess) {
-      console.warn('添加玩家好感度数据失败，但注册过程继续');
-    }
-
-    return { success: true, playerData: playerDataXK };
-  } catch (error) {
-    console.error('侠客注册失败:', error);
-
-    return { success: false, error: '侠客注册失败，请稍后重试！' };
+  if (!player) {
+    return { success: false, error: '玩家数据不存在' };
   }
+
+  // 生成侠客编号
+  const xkId = await generateXKId();
+
+  // 创建玩家数据
+  const playerDataXK: XKPlayerData = {
+    id: userId,
+    名号: player.名号,
+    money: 0,
+    level: 1
+  };
+
+  // 创建背包数据
+  const bagData: XKBagData = {
+    id: xkId,
+    uid: userId,
+    名号: player.名号,
+    装备: [],
+    消耗: [],
+    武学: [],
+    材料: [],
+    任务: []
+  };
+
+  // 创建初始装备
+  const equipmentData: XKEquipmentData = {
+    id: await generateEquipmentId(userId),
+    UID: userId,
+    名号: player.名号,
+    name: '主角',
+    registeredTime: new Date().toISOString(),
+    part: 'weapon',
+    equipment: [
+      {
+        id: 412102,
+        name: '木剑',
+        quality: '白',
+        type: '剑',
+        maxStack: 999,
+        stackSize: 1,
+        buyPrice: 320,
+        sellPrice: 32,
+        description: null
+      }
+    ]
+  };
+
+  // 写入数据到Redis
+  await redis.set(`xk_player_data:${userId}`, JSON.stringify(playerDataXK));
+  await redis.set(`xk_Equipment:${userId}:${xkId}`, JSON.stringify(equipmentData));
+  await redis.set(`xk_bag:${userId}`, JSON.stringify(bagData));
+
+  // 添加玩家好感度数据
+  const favorabilitySuccess = await addPlayerFavorabilityData(userId);
+
+  if (!favorabilitySuccess) {
+    console.warn('添加玩家好感度数据失败，但注册过程继续');
+  }
+
+  return { success: true, playerData: playerDataXK };
 }
 
 /**

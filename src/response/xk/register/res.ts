@@ -7,14 +7,17 @@ import {
 } from '@src/model/xk/register';
 import { selects } from '@src/response/mw-captcha';
 import mw from '@src/response/mw-captcha';
+import { existplayer } from '@src/model';
 
 // 侠客注册指令正则表达式 - 只处理"进入侠客江湖"
 export const regular = /^(#|＃|\/)?进入侠客江湖$/;
-
 const res = onResponse(selects, async e => {
   const Send = useSend(e);
   const userId = e.UserId;
 
+if (!(await existplayer(userId))) {
+    return false;
+  }
   // 检查玩家是否已在侠客江湖注册过
   const isRegistered = await isPlayerRegistered(userId);
 

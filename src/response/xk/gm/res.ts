@@ -3,7 +3,7 @@ import { redis } from '@src/model/api';
 import { existplayer } from '@src/model/index';
 import { selects } from '@src/response/mw-captcha';
 import { onResponse } from 'alemonjs';
-import { addItemToBag, getPlayerBag, savePlayerBag, BagData, _getItemCategory } from '@src/model/xk/bag';
+import { parseGMCommand, executeGMGiveItem } from '@src/model/xk/gm';
 
 /**
  * GM指令：侠客获得物品名称*数量
@@ -12,167 +12,16 @@ import { addItemToBag, getPlayerBag, savePlayerBag, BagData, _getItemCategory } 
  * 背包逻辑：如果背包里有物品了，那么直接背包里的物品数量加上加入到背包里的物品数量
  * 如果背包里没有，就直接把对象数据加入到背包里
  */
-export const regular = /^(#|＃|\/)?侠客获得\s+(.*)\*(\d+)$/;
-
-/**
- * 将字符串转换为整数
- */
-function toInt(v: string, d = 0): number {
-  const n = Number(v);
-
-  return Number.isFinite(n) ? Math.trunc(n) : d;
-}
-
-/**
- * 获取物品在XKItem表中的数据
- */
-async function getItemData(itemName: string): Promise<any> {
-  try {
-    const xkItemData = await redis.get('XKItem');
-
-    if (!xkItemData) {
-      return null;
-    }
-
-    const xkItemList = JSON.parse(xkItemData);
-
-    // 查找物品 - 支持多种可能的字段名
-    const item = xkItemList.find((item: any) => item.name === itemName
-      || item.名称 === itemName
-      || item.itemName === itemName
-    );
-
-    return item || null;
-  } catch (error) {
-    console.error('获取物品数据失败:', error);
-
-    return null;
-  }
-}
-
-/**
- * 获取玩家侠客数据
- */
-async function getPlayerXKData(userId: string): Promise<any> {
-  try {
-    const playerDataStr = await redis.get(`xk_player_data:${userId}`);
-
-    if (!playerDataStr) {
-      return null;
-    }
-
-    return JSON.parse(playerDataStr);
-  } catch (error) {
-    console.error('获取玩家侠客数据失败:', error);
-
-    return null;
-  }
-}
-
-/**
- * 保存玩家侠客数据
- */
-async function savePlayerXKData(userId: string, playerData: any): Promise<boolean> {
-  try {
-    await redis.set(`xk_player_data:${userId}`, JSON.stringify(playerData));
-
-    return true;
-  } catch (error) {
-    console.error('保存玩家侠客数据失败:', error);
-
-    return false;
-  }
-}
-
-/**
- * 获取玩家背包数据
- */
-async function _getPlayerBagData(userId: string): Promise<BagData | null> {
-  try {
-    return await getPlayerBag(userId);
-  } catch (error) {
-    console.error('获取玩家背包数据失败:', error);
-
-    return null;
-  }
-}
-
-/**
- * 保存玩家背包数据
- */
-async function _savePlayerBagData(userId: string, bagData: BagData): Promise<boolean> {
-  try {
-    return await savePlayerBag(userId, bagData);
-  } catch (error) {
-    console.error('保存玩家背包数据失败:', error);
-
-    return false;
-  }
-}
-
-/**
- * 处理铜钱添加逻辑
- */
-async function handleMoneyAdd(userId: string, quantity: number): Promise<boolean> {
-  try {
-    const playerData = await getPlayerXKData(userId);
-
-    if (!playerData) {
-      return false;
-    }
-
-    // 确保money字段存在
-    if (typeof playerData.money !== 'number') {
-      playerData.money = 0;
-    }
-
-    // 添加铜钱数量
-    playerData.money += quantity;
-
-    // 防止溢出
-    if (playerData.money > 1e15) {
-      playerData.money = 1e15;
-    }
-
-    return await savePlayerXKData(userId, playerData);
-  } catch (error) {
-    console.error('处理铜钱添加失败:', error);
-
-    return false;
-  }
-}
-
-/**
- * 处理物品添加到背包逻辑
- */
-async function handleItemAdd(userId: string, itemName: string, quantity: number): Promise<boolean> {
-  try {
-    // 获取物品数据
-    const itemData = await getItemData(itemName);
-
-    if (!itemData) {
-      return false;
-    }
-
-    // 使用标准化的背包模型添加物品
-    // 从物品数据中获取物品ID，如果没有则使用名称生成
-    const itemId = itemData.id || itemData.itemId || `item_${itemName.replace(/[^a-zA-Z0-9]/g, '_')}`;
-
-    // 使用背包模型的addItemToBag函数
-    return await addItemToBag(userId, itemId, quantity);
-  } catch (error) {
-    console.error('处理物品添加到背包失败:', error);
-
-    return false;
-  }
-}
+export const regular = /侠客获得/;
 
 const res = onResponse(selects, async e => {
+  logger.info('GM指令：侠客获得物品名称*数量');
   const Send = useSend(e);
   const userId = e.UserId;
 
   // 检查玩家是否存在
   if (!(await existplayer(userId))) {
+    logger.info('检测玩家是否存在');
     void Send(Text('请先在修仙系统中注册！'));
 
     return false;
@@ -182,63 +31,35 @@ const res = onResponse(selects, async e => {
   const xkPlayerDataStr = await redis.get(`xk_player_data:${userId}`);
 
   if (!xkPlayerDataStr) {
+    logger.info('检测玩家是否已在侠客江湖注册过');
     void Send(Text('请先进入侠客江湖！'));
 
     return false;
   }
 
   // 解析指令
-  const match = e.MessageText.match(/^(#|＃|\/)?侠客获得\s+(.*)\*(\d+)$/);
+  const parseResult = parseGMCommand(e.MessageText);
 
-  if (!match) {
-    void Send(Text('格式错误！正确格式：侠客获得物品名称*数量'));
-
-    return false;
-  }
-
-  const itemName = match[2]?.trim();
-  const rawQuantity = match[3];
-
-  if (!itemName) {
-    void Send(Text('物品名称不能为空！'));
+logger.info('解析指令', parseResult);
+  if (!parseResult.isValid) {
+    void Send(Text(parseResult.error || '格式错误！正确格式：侠客获得物品名称*数量'));
 
     return false;
   }
 
-  const quantity = toInt(rawQuantity, 1);
+  // 执行GM指令
+  logger.info('执行GM指令');
+  const result = await executeGMGiveItem(userId, parseResult.itemName!, parseResult.quantity!);
 
-  if (quantity <= 0) {
-    void Send(Text('数量必须大于0！'));
-
-    return false;
-  }
-
-  // 防止数量过大
-  const maxQuantity = 999999;
-  const finalQuantity = Math.min(quantity, maxQuantity);
-
-  // 处理铜钱逻辑
-  if (itemName === '铜钱' || itemName === '铜币') {
-    const success = await handleMoneyAdd(userId, finalQuantity);
-
-    if (success) {
-      const playerData = await getPlayerXKData(userId);
-
-      void Send(Text(`GM指令执行成功！获得铜钱*${finalQuantity}\n当前铜钱：${playerData?.money || 0}`));
+  logger.info('执行GM指令结果', result);
+  if (result.success) {
+    if (result.currentMoney !== undefined) {
+      void Send(Text(`${result.message}\n当前铜钱：${result.currentMoney}`));
     } else {
-      void Send(Text('GM指令执行失败！请检查系统状态。'));
+      void Send(Text(result.message));
     }
-
-    return false;
-  }
-
-  // 处理普通物品逻辑
-  const success = await handleItemAdd(userId, itemName, finalQuantity);
-
-  if (success) {
-    void Send(Text(`GM指令执行成功！获得${itemName}*${finalQuantity}`));
   } else {
-    void Send(Text(`GM指令执行失败！物品${itemName}不存在或系统异常。`));
+    void Send(Text(result.message));
   }
 
   return false;
