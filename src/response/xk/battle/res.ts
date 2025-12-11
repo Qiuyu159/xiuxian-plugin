@@ -142,25 +142,31 @@ const res = onResponse(selects, async e => {
   // 检查玩家是否存在
   if (!(await existplayer(userId))) {
     void Send(Text('请先在修仙系统中注册！'));
+
     return false;
   }
 
   // 检查玩家是否已在侠客江湖注册过
   const xkPlayerDataStr = await redis.get(`xk_player_data:${userId}`);
+
   if (!xkPlayerDataStr) {
     void Send(Text('请先进入侠客江湖！'));
+
     return false;
   }
 
   // 检查消息是否匹配侠客切磋指令
   const match = e.MessageText.match(regular);
+
   if (!match) {
     return true; // 不匹配，继续处理其他模块
   }
 
   const characterName = match[2]?.trim();
+
   if (!characterName) {
     void Send(Text('请输入要切磋的角色名称！例如：侠客切磋风冲'));
+
     return false;
   }
 
@@ -178,6 +184,7 @@ const res = onResponse(selects, async e => {
 
     // 生成战斗结果报告
     let battleReport = '=== 侠客切磋结果 ===\\n';
+
     battleReport += `玩家 ${player.name} vs ${opponent.name}\\n`;
     battleReport += `战斗结果：${result.winner === 'player' ? '胜利' : '失败'}\\n`;
     battleReport += `战斗回合数：${result.rounds}\\n\\n`;
