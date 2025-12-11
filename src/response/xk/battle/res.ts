@@ -1,5 +1,13 @@
+import { onResponse, useSend, Text } from 'alemonjs';
+import { redis } from '@src/model/api';
+import { existplayer } from '@src/model/index';
+import { selects } from '@src/response/mw-captcha';
+import mw from '@src/response/mw-captcha';
 import { startBattle } from '../../../model/xk/battle';
 import { Piece } from '../../../model/xk/Piece';
+
+// 侠客切磋指令正则表达式
+export const regular = /^(#|＃|\/)?侠客切磋\s*(.+)$/;
 
 // 根据角色名称创建对手
 function createOpponentByCharacterName(characterName: string): Piece {
@@ -127,19 +135,33 @@ function createPlayer(): Piece {
   });
 }
 
-// 战斗响应函数
-export async function handleBattleCommand(message: string): Promise<string> {
-  // 正则匹配：侠客切磋+角色名称
-  const match = message.match(/侠客切磋\s*(.+)/);
+const res = onResponse(selects, async e => {
+  const Send = useSend(e);
+  const userId = e.UserId;
 
-  if (!match) {
-    return '指令格式错误！请使用：侠客切磋+角色名称，例如：侠客切磋风冲';
+  // 检查玩家是否存在
+  if (!(await existplayer(userId))) {
+    void Send(Text('请先在修仙系统中注册！'));
+    return false;
   }
 
-  const characterName = match[1].trim();
+  // 检查玩家是否已在侠客江湖注册过
+  const xkPlayerDataStr = await redis.get(`xk_player_data:${userId}`);
+  if (!xkPlayerDataStr) {
+    void Send(Text('请先进入侠客江湖！'));
+    return false;
+  }
 
+  // 检查消息是否匹配侠客切磋指令
+  const match = e.MessageText.match(regular);
+  if (!match) {
+    return true; // 不匹配，继续处理其他模块
+  }
+
+  const characterName = match[2]?.trim();
   if (!characterName) {
-    return '请输入要切磋的角色名称！例如：侠客切磋风冲';
+    void Send(Text('请输入要切磋的角色名称！例如：侠客切磋风冲'));
+    return false;
   }
 
   try {
@@ -155,60 +177,24 @@ export async function handleBattleCommand(message: string): Promise<string> {
     const result = await startBattle(playerTeam, opponentTeam);
 
     // 生成战斗结果报告
-    let battleReport = '=== 侠客切磋结果 ===\n';
-
-    battleReport += `玩家 ${player.name} vs ${opponent.name}\n`;
-    battleReport += `战斗结果：${result.winner === 'player' ? '胜利' : '失败'}\n`;
-    battleReport += `战斗回合数：${result.rounds}\n\n`;
+    let battleReport = '=== 侠客切磋结果 ===\\n';
+    battleReport += `玩家 ${player.name} vs ${opponent.name}\\n`;
+    battleReport += `战斗结果：${result.winner === 'player' ? '胜利' : '失败'}\\n`;
+    battleReport += `战斗回合数：${result.rounds}\\n\\n`;
 
     // 添加战斗详情
-    battleReport += '战斗详情：\n';
+    battleReport += '战斗详情：\\n';
     result.battleLog.forEach((event, index) => {
-      battleReport += `${index + 1}. ${event}\n`;
+      battleReport += `${index + 1}. ${event}\\n`;
     });
 
-    return battleReport;
+    void Send(Text(battleReport));
   } catch (error) {
     console.error('战斗处理错误:', error);
-
-    return `战斗处理失败：${error instanceof Error ? error.message : '未知错误'}`;
+    void Send(Text(`战斗处理失败：${error instanceof Error ? error.message : '未知错误'}`));
   }
-}
 
-// 测试战斗函数（使用旧数据）
-export async function testBattleWithOldData(): Promise<string> {
-  try {
-    // 创建测试队伍
-    const playerTeam = [createPlayer()]; // 玩家作为A队伍
-    const opponentTeam = [createOpponentByCharacterName('风冲')]; // 风冲作为B队伍
+  return false;
+});
 
-    const result = await startBattle(playerTeam, opponentTeam);
-
-    let testReport = '=== 旧数据战斗测试结果 ===\n';
-
-    testReport += `A队伍：${playerTeam[0].name} vs B队伍：${opponentTeam[0].name}\n`;
-    testReport += `战斗结果：${result.winner === 'player' ? 'A队伍胜利' : 'B队伍胜利'}\n`;
-    testReport += `战斗回合数：${result.rounds}\n\n`;
-
-    // 添加战斗详情
-    testReport += '战斗详情：\n';
-    result.battleLog.forEach((event, index) => {
-      testReport += `${index + 1}. ${event}\n`;
-    });
-
-    return testReport;
-  } catch (error) {
-    console.error('测试战斗错误:', error);
-
-    return `测试战斗失败：${error instanceof Error ? error.message : '未知错误'}`;
-  }
-}
-
-// 导出正则表达式用于注册
-export const battleCommandRegex = /侠客切磋\s*(.+)/;
-
-// 导出响应函数
-export default {
-  regex: battleCommandRegex,
-  handler: handleBattleCommand
-};
+export default onResponse(selects, [mw.current, res.current]);

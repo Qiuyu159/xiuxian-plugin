@@ -2,6 +2,7 @@ import { onResponse, useSend, Text } from 'alemonjs';
 import { redis } from '@src/model/api';
 import { existplayer } from '@src/model/index';
 import { selects } from '@src/response/mw-captcha';
+import mw from '@src/response/mw-captcha';
 import {
   getBagInfo,
   getBagItems,
@@ -120,4 +121,4 @@ const res = onResponse(selects, async e => {
   return false;
 });
 
-export default onResponse(selects, res.current);
+export default onResponse(selects, [mw.current, res.current]);

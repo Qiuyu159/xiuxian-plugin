@@ -1,0 +1,249 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "title": "在你周岁之时,父母让你抓阄，你选择了？",
+      "options": [
+        {
+          "id": 1,
+          "text": "书籍",
+          "effect": {
+            "attributeBonus": {},
+            "itemRewards": [
+              {
+                "name": "爱书之人",
+                "quantity": 1,
+                "type": "talent"
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "text": "铜钱",
+          "effect": {
+            "attributeBonus": {
+              "money": 5000,
+              "hiddenWeaponMastery": 65,
+              "medicalMastery": 65
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 3,
+          "text": "木剑",
+          "effect": {
+            "attributeBonus": {},
+            "itemRewards": [
+              {
+                "name": "橙色武器盒",
+                "quantity": 1,
+                "type": "item"
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "text": "唢呐",
+          "effect": {
+            "attributeBonus": {
+              "qimenMastery": 85
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 5,
+          "text": "麦穗",
+          "effect": {
+            "attributeBonus": {
+              "fistMastery": 65,
+              "legMastery": 65
+            },
+            "itemRewards": []
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "当你读者武侠小人书,幻想自己成为怎样的\"大侠\"？",
+      "options": [
+        {
+          "id": 1,
+          "text": "神功无敌",
+          "effect": {
+            "attributeBonus": {},
+            "itemRewards": [
+              {
+                "name": "橙色武学书",
+                "quantity": 1,
+                "type": "item"
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "text": "白首同心",
+          "effect": {
+            "attributeBonus": {
+              "femaleFavor": 99
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 3,
+          "text": "云游",
+          "effect": {
+            "attributeBonus": {
+              "travelSpeed": 30
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 4,
+          "text": "胜友如云",
+          "effect": {
+            "attributeBonus": {},
+            "itemRewards": [
+              {
+                "name": "侠客介绍令",
+                "quantity": 1,
+                "type": "item"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "父亲带着你上街,你看到有人在偷钱,你会？",
+      "options": [
+        {
+          "id": 1,
+          "text": "正面战斗",
+          "effect": {
+            "attributeBonus": {
+              "righteousness": 40,
+              "swordMastery": 65
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 2,
+          "text": "报官求助",
+          "effect": {
+            "attributeBonus": {
+              "evasion": 80
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 3,
+          "text": "与我无关",
+          "effect": {
+            "attributeBonus": {
+              "righteousness": -40,
+              "bladeMastery": 65
+            },
+            "itemRewards": []
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "你爱的姑娘劝你不要闯荡江湖，与她过平凡安逸的日子,你会？",
+      "options": [
+        {
+          "id": 1,
+          "text": "偷偷练武",
+          "effect": {
+            "attributeBonus": {
+              "martialAttack": 400
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 2,
+          "text": "留在村里",
+          "effect": {
+            "attributeBonus": {
+              "defense": 130
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 3,
+          "text": "离开姑娘",
+          "effect": {
+            "attributeBonus": {
+              "energyRegen": 100
+            },
+            "itemRewards": []
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "在投身江湖前夜，你最后做的事是？",
+      "options": [
+        {
+          "id": 1,
+          "text": "拜别双亲",
+          "effect": {
+            "attributeBonus": {
+              "maxEnergy": 2200
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 2,
+          "text": "吃饱睡觉",
+          "effect": {
+            "attributeBonus": {
+              "maxHealth": 4000
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 3,
+          "text": "准备盘缠",
+          "effect": {
+            "attributeBonus": {
+              "money": 10000
+            },
+            "itemRewards": []
+          }
+        },
+        {
+          "id": 4,
+          "text": "练武不辍",
+          "effect": {
+            "attributeBonus": {},
+            "itemRewards": [
+              {
+                "name": "珍惜武学丹",
+                "quantity": 5,
+                "type": "item"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

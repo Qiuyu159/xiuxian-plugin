@@ -1,0 +1,19 @@
+[mysqld]
+# 关闭二进制日志
+skip-log-bin
+# 禁用二进制日志索引
+log-bin-index = ""
+# 禁用中继日志
+skip-log-slave-updates
+# 禁用中继日志索引
+relay-log-index = ""
+# 禁用中继日志
+relay-log = ""
+# 禁用二进制日志格式
+binlog_format = MIXED
+# 禁用二进制日志缓存
+binlog_cache_size = 0
+# 禁用二进制日志过期时间
+binlog_expire_logs_seconds = 0
+# 禁用二进制日志大小限制
+max_binlog_size = 0

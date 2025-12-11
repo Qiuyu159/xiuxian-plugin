@@ -1,0 +1,58 @@
+{
+  "masteryRanges": {
+    "fistMastery": {"min": 1, "max": 100},
+    "swordMastery": {"min": 1, "max": 100},
+    "bladeMastery": {"min": 1, "max": 100},
+    "legMastery": {"min": 1, "max": 100},
+    "qimenMastery": {"min": 1, "max": 100},
+    "hiddenWeaponMastery": {"min": 1, "max": 100},
+    "medicalMastery": {"min": 1, "max": 100},
+    "internalMastery": {"min": 1, "max": 100}
+  },
+  "baseRanges": {
+    "attack": {"min": 1, "max": 1000},
+    "health": {"min": 1, "max": 5000},
+    "energy": {"min": 1, "max": 1000},
+    "defense": {"min": 1, "max": 1000}
+  },
+  "characterAttributes": {
+    "default": {
+      "fistMastery": 10,
+      "swordMastery": 10,
+      "bladeMastery": 10,
+      "legMastery": 10,
+      "qimenMastery": 10,
+      "hiddenWeaponMastery": 10,
+      "medicalMastery": 10,
+      "internalMastery": 10,
+      "attack": 100,
+      "health": 1000,
+      "energy": 100,
+      "defense": 100,
+      "morality": 0,
+      "money": 0,
+      "travelSpeed": 0,
+      "dodge": 0,
+      "energyRecovery": 0,
+      "femaleFavorability": 0,
+      "strength": 10,
+      "agility": 10,
+      "constitution": 10,
+      "comprehension": 10,
+      "internalStrength": 10
+    }
+  },
+  "talentSelection": {
+    "firstTalent": "爱书之人",
+    "randomTalentPool": [
+      "习惯暗器", "习惯用棍", "习惯用腿", "习惯用拳", "习惯用刀",
+      "天命之人", "玲珑之人", "不羁之人", "任侠之人",
+      "力道突出", "内劲突出", "仁道小成", "霸道小成", "悟性突出",
+      "体质突出", "精力突出", "灵巧突出",
+      "剑法奇才", "暗器奇才", "棍法奇才", "腿法奇才", "拳掌奇才", "刀法奇才",
+      "骨骼清奇", "暗器橙色", "棍法橙色", "飘然若仙子", "虎啸吞龙吟",
+      "冷月映寒芒", "飒沓如流星",
+      "仁道天成", "霸道天成", "吸星吞日"
+    ]
+  }
+}

@@ -1,0 +1,274 @@
+{
+  "talents": [
+    {
+      "name": "习惯暗器",
+      "quality": "白",
+      "description": "暗器精通+5%",
+      "effect": {
+        "hiddenWeaponMastery": 0.05
+      }
+    },
+    {
+      "name": "习惯用棍",
+      "quality": "白",
+      "description": "奇门精通+5%",
+      "effect": {
+        "qimenMastery": 0.05
+      }
+    },
+    {
+      "name": "习惯用腿",
+      "quality": "白",
+      "description": "腿法精通+5%",
+      "effect": {
+        "legMastery": 0.05
+      }
+    },
+    {
+      "name": "习惯用拳",
+      "quality": "白",
+      "description": "拳掌精通+5%",
+      "effect": {
+        "fistMastery": 0.05
+      }
+    },
+    {
+      "name": "习惯用刀",
+      "quality": "白",
+      "description": "刀法精通+5%",
+      "effect": {
+        "bladeMastery": 0.05
+      }
+    },
+    {
+      "name": "天命之人",
+      "quality": "白",
+      "description": "全属性+10",
+      "effect": {
+        "allAttributes": 10
+      }
+    },
+    {
+      "name": "玲珑之人",
+      "quality": "白",
+      "description": "悟性、内劲+20",
+      "effect": {
+        "comprehension": 20,
+        "internalStrength": 20
+      }
+    },
+    {
+      "name": "不羁之人",
+      "quality": "白",
+      "description": "力道、灵巧+20",
+      "effect": {
+        "strength": 20,
+        "agility": 20
+      }
+    },
+    {
+      "name": "任侠之人",
+      "quality": "白",
+      "description": "精力、体质+20",
+      "effect": {
+        "energy": 20,
+        "constitution": 20
+      }
+    },
+    {
+      "name": "力道突出",
+      "quality": "绿",
+      "description": "力道+5%",
+      "effect": {
+        "strength": 0.05
+      }
+    },
+    {
+      "name": "内劲突出",
+      "quality": "绿",
+      "description": "内劲+5%",
+      "effect": {
+        "internalStrength": 0.05
+      }
+    },
+    {
+      "name": "仁道小成",
+      "quality": "绿",
+      "description": "每月仁义值+2",
+      "effect": {
+        "monthlyMorality": 2
+      }
+    },
+    {
+      "name": "霸道小成",
+      "quality": "绿",
+      "description": "每月仁义值-2",
+      "effect": {
+        "monthlyMorality": -2
+      }
+    },
+    {
+      "name": "悟性突出",
+      "quality": "绿",
+      "description": "悟性+5%",
+      "effect": {
+        "comprehension": 0.05
+      }
+    },
+    {
+      "name": "体质突出",
+      "quality": "绿",
+      "description": "体质+5%",
+      "effect": {
+        "constitution": 0.05
+      }
+    },
+    {
+      "name": "精力突出",
+      "quality": "绿",
+      "description": "精力+5%",
+      "effect": {
+        "energy": 0.05
+      }
+    },
+    {
+      "name": "灵巧突出",
+      "quality": "绿",
+      "description": "灵巧+5%",
+      "effect": {
+        "agility": 0.05
+      }
+    },
+    {
+      "name": "剑法奇才",
+      "quality": "蓝",
+      "description": "剑法精通+10%",
+      "effect": {
+        "swordMastery": 0.10
+      }
+    },
+    {
+      "name": "暗器奇才",
+      "quality": "蓝",
+      "description": "暗器精通+10%",
+      "effect": {
+        "hiddenWeaponMastery": 0.10
+      }
+    },
+    {
+      "name": "棍法奇才",
+      "quality": "蓝",
+      "description": "奇门精通+10%",
+      "effect": {
+        "qimenMastery": 0.10
+      }
+    },
+    {
+      "name": "腿法奇才",
+      "quality": "蓝",
+      "description": "腿法精通+10%",
+      "effect": {
+        "legMastery": 0.10
+      }
+    },
+    {
+      "name": "拳掌奇才",
+      "quality": "蓝",
+      "description": "拳掌精通+10%",
+      "effect": {
+        "fistMastery": 0.10
+      }
+    },
+    {
+      "name": "刀法奇才",
+      "quality": "蓝",
+      "description": "刀法精通+10%",
+      "effect": {
+        "bladeMastery": 0.10
+      }
+    },
+    {
+      "name": "骨骼清奇",
+      "quality": "橙",
+      "description": "所有基础属性+5%",
+      "effect": {
+        "allBaseAttributes": 0.05
+      }
+    },
+    {
+      "name": "暗器橙色",
+      "quality": "橙",
+      "description": "暗器精通+15%",
+      "effect": {
+        "hiddenWeaponMastery": 0.15
+      }
+    },
+    {
+      "name": "棍法橙色",
+      "quality": "橙",
+      "description": "奇门精通+15%",
+      "effect": {
+        "qimenMastery": 0.15
+      }
+    },
+    {
+      "name": "飘然若仙子",
+      "quality": "橙",
+      "description": "腿法精通+15%",
+      "effect": {
+        "legMastery": 0.15
+      }
+    },
+    {
+      "name": "虎啸吞龙吟",
+      "quality": "橙",
+      "description": "拳掌精通+15%",
+      "effect": {
+        "fistMastery": 0.15
+      }
+    },
+    {
+      "name": "冷月映寒芒",
+      "quality": "橙",
+      "description": "刀法精通+15%",
+      "effect": {
+        "bladeMastery": 0.15
+      }
+    },
+    {
+      "name": "飒沓如流星",
+      "quality": "橙",
+      "description": "剑法精通+15%",
+      "effect": {
+        "swordMastery": 0.15
+      }
+    },
+    {
+      "name": "仁道天成",
+      "quality": "紫",
+      "description": "每月仁义值+10",
+      "effect": {
+        "monthlyMorality": 10
+      }
+    },
+    {
+      "name": "霸道天成",
+      "quality": "紫",
+      "description": "每月仁义值-10",
+      "effect": {
+        "monthlyMorality": -10
+      }
+    },
+    {
+      "name": "吸星吞日",
+      "quality": "金",
+      "description": "攻击时根据伤害量提升5%的真气（最大获得20000真气）",
+      "effect": {
+        "energyAbsorption": {
+          "rate": 0.05,
+          "maxEnergy": 20000
+        }
+      }
+    }
+  ]
+}

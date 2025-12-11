@@ -11,6 +11,7 @@ import xkMarketResponse from './xk/market/res';
 import xkGiveResponse from './xk/give/res';
 import xkFavorabilityResponse from './xk/favorability/res';
 import xkBattleResponse from './xk/battle/res';
+import xkZhoumuResponse from './xk/zhoumu/res';
 
 // 导入用户相关响应模块
 import userStartNewbieResponse from './User/UserStart/newbie/res';
@@ -28,6 +29,7 @@ export default [
   xkGiveResponse,
   xkFavorabilityResponse,
   xkBattleResponse,
+  xkZhoumuResponse,
   userStartNewbieResponse,
   adminSuperUpdateRecordResponse
 ];
