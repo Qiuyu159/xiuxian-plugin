@@ -50,7 +50,12 @@ yarn view
 - 启动管理端
 
 ```sh
-yarn bundle-dev
+yarn dev
+```
+
+- 编译
+```sh
+yarn build
 ```
 
 > http://127.0.0.1:17117/app/

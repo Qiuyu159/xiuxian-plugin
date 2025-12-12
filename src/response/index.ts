@@ -9,7 +9,7 @@ import xkRegisterInfoResponse from './xk/register_info/res';
 import xkBagResponse from './xk/bag/res';
 import xkGmResponse from './xk/gm/res';
 // import xkMarketResponse from './xk/market/res';
-// import xkGiveResponse from './xk/give/res';
+import xkGiveResponse from './xk/give/res';
 // import xkFavorabilityResponse from './xk/favorability/res';
 // import xkBattleResponse from './xk/battle/res';
 // import xkZhoumuResponse from './xk/zhoumu/res';
@@ -28,7 +28,7 @@ export default [
   xkBagResponse,
   xkGmResponse,
   // xkMarketResponse,
-  // xkGiveResponse,
+  xkGiveResponse,
   // xkFavorabilityResponse,
   // xkBattleResponse,
   // xkZhoumuResponse,
