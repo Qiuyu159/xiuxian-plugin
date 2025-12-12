@@ -2,11 +2,6 @@ import { getAppConfig } from './model';
 import { initPostlog } from './model/posthog';
 import { initDefaultAdmin } from './route/core/auth';
 import { startAllTasks } from './task/index';
-import { startInitDataTask } from './task/initDataTask';
-
-// 导入响应模块
-import responseModules from './response';
-
 export default defineChildren({
   onCreated() {
     logger.info('修仙扩展启动');
@@ -29,11 +24,5 @@ export default defineChildren({
         logger.error('启动定时任务失败:', error);
       });
     }
-
-    // 项目启动时执行一次数据初始化任务
-    startInitDataTask().catch(error => {
-      logger.error('启动数据初始化任务失败:', error);
-    });
-  },
-  response: responseModules
+  }
 });

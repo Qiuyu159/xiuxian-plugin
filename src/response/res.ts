@@ -2,7 +2,7 @@ import { getIoRedis } from '@alemonjs/db';
 import { getAppConfig, keys } from '@src/model';
 import { generateCaptcha, svgToPngBuffer, verifyCaptcha } from '@src/model/captcha';
 import { baseKey } from '@src/model/keys';
-import { Image, Mention, Text, useMessage, onResponse, format, logger } from 'alemonjs';
+import { Image, Mention, Text, useMessage } from 'alemonjs';
 import dayjs from 'dayjs';
 import { selects } from './mw-captcha';
 import { captchaTries, MAX_CAPTCHA_TRIES, op, replyCount } from './config';
@@ -51,7 +51,7 @@ export default onResponse(selects, async event => {
     if (!/^[a-zA-Z0-9]{1,9}$/.test(text)) {
       logger.debug(`用户 ${userId} 输入的消息不符合验证码格式`);
 
-      return true;
+      return;
     }
 
     const success = await verifyCaptcha(userId, text);
@@ -99,5 +99,4 @@ export default onResponse(selects, async event => {
   }
 
   // 不需要过验证码，但触发验证码批评。进行忽略
-  return true;
 });

@@ -1,7 +1,7 @@
-import { onResponse, useSend, Text } from 'alemonjs';
+import { useSend, Text } from 'alemonjs';
 import { giveItemToCharacter } from '../../../model/xk/give';
 import { selects } from '../../mw-captcha';
-
+import mw from '@src/response/mw-captcha';
 // 赠予指令前缀
 export const regular = '侠客赠予';
 
@@ -46,7 +46,7 @@ const res = onResponse(selects, async e => {
     const result = await giveItemToCharacter(e.UserId, characterName, itemName, quantity);
 
     if (result.success) {
-      void Send(Text(result.message));
+      void Send(Text(result.message ?? '赠送成功！'));
     } else {
       void Send(Text(result.error || '赠送失败！'));
     }
@@ -58,4 +58,4 @@ const res = onResponse(selects, async e => {
   return true;
 });
 
-export default res;
+export default onResponse(selects, [mw.current, res.current]);

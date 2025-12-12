@@ -2,9 +2,8 @@ import { Text, useSend } from 'alemonjs';
 import { redis } from '@src/model/api';
 import { existplayer } from '@src/model/index';
 import { selects } from '@src/response/mw-captcha';
-import { onResponse } from 'alemonjs';
 import { parseGMCommand, executeGMGiveItem } from '@src/model/xk/gm';
-
+import mw from '@src/response/mw-captcha';
 /**
  * GM指令：侠客获得物品名称*数量
  * 如果物品名称是铜钱，则直接在角色信息里加对应数量的money
@@ -65,4 +64,4 @@ logger.info('解析指令', parseResult);
   return false;
 });
 
-export default onResponse(selects, res.current);
+export default onResponse(selects, [mw.current, res.current]);

@@ -1,4 +1,4 @@
-import { onResponse, useSend, Text } from 'alemonjs';
+import { useSend, Text } from 'alemonjs';
 import { redis } from '@src/model/api';
 import { existplayer } from '@src/model/index';
 import { selects } from '@src/response/mw-captcha';

@@ -12,7 +12,7 @@ import mw from '@src/response/mw-captcha';
 // 侠客信息查询指令正则表达式 - 只处理"侠客信息"
 export const infoRegular = /^(#|＃|\/)?侠客信息$/;
 
-const infoResponse = onResponse(selects, async e => {
+const res = onResponse(selects, async e => {
   const Send = useSend(e);
   const userId = e.UserId;
 
@@ -45,4 +45,4 @@ const infoResponse = onResponse(selects, async e => {
   return false;
 });
 
-export default onResponse(selects, [mw.current, infoResponse.current]);
+export default onResponse(selects, [mw.current, res.current]);

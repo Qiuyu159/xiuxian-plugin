@@ -3,7 +3,7 @@ import { redis } from '@src/model/api';
 import { existplayer } from '@src/model/index';
 import { selects } from '@src/response/mw-captcha';
 import { addItemToBag, removeItemFromBag, getBagItems } from '@src/model/xk/bag';
-
+import mw from '@src/response/mw-captcha';
 export const regular = /^(#|＃|\/)?(开封|杭州|广州|大理|京城)?(购买|出售)((.*)|(.*)*(.*))$/;
 
 function toInt(v, d = 0) {
@@ -206,4 +206,4 @@ const res = onResponse(selects, async e => {
   return false;
 });
 
-export default onResponse(selects, res.current);
+export default onResponse(selects, [mw.current, res.current]);

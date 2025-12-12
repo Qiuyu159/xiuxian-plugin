@@ -1,7 +1,7 @@
-import { onResponse, useSend, Text } from 'alemonjs';
+import { useSend, Text } from 'alemonjs';
 import { getPlayerFavorability, hasFavorabilityRecord, getCharacterList } from '../../../model/xk/favorability';
 import { selects } from '../../mw-captcha';
-
+import mw from '@src/response/mw-captcha';
 // 查看好感度指令前缀
 export const regular = '侠客查看好感度';
 
@@ -90,4 +90,4 @@ const res = onResponse(selects, async e => {
   return true;
 });
 
-export default res;
+export default onResponse(selects, [mw.current, res.current]);

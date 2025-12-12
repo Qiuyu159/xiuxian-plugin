@@ -1,5 +1,4 @@
 import { Text, useSend } from 'alemonjs';
-import { onResponse } from 'alemonjs';
 import {
   isPlayerRegistered,
   registerNewXKPlayer,
