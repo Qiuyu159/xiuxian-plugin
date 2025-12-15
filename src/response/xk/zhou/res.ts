@@ -1,16 +1,13 @@
 import { Text, useSend } from 'alemonjs';
 import { selects } from '@src/response/mw-captcha';
 import mw from '@src/response/mw-captcha';
-import { isPlayerRegistered } from '@src/model/xk/register';
-export const regular = /^(#|＃|\/)?测试空存档$/;
+export const regular = /^(#|＃|\/)?侠客上阵.*$/;
 
-const res = onResponse(selects, async e => {
-  const userId = e.UserId;
-  const isRegistered = await isPlayerRegistered(userId);
+const res = onResponse(selects, e => {
   const Send = useSend(e);
 
-  logger.info(`测试空存档成功: ${isRegistered}`);
-  void Send(Text('测试空存档'));
+  logger.info(`测试上阵成功: ${e.MessageText}`);
+  void Send(Text('测试上阵'));
 
   return false;
 });
