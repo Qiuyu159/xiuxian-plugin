@@ -3,7 +3,7 @@ import { getPlayerFavorability, hasFavorabilityRecord, getCharacterList } from '
 import { selects } from '../../mw-captcha';
 import mw from '@src/response/mw-captcha';
 // 查看好感度指令前缀
-export const regular = '侠客查看好感度';
+export const regular = /^(#|＃|\/)?侠客查看好感度.*$/;
 
 const res = onResponse(selects, async e => {
   const Send = useSend(e);
@@ -11,13 +11,8 @@ const res = onResponse(selects, async e => {
   try {
     const messageText = e.MessageText.trim();
 
-    // 检查是否以指令前缀开头
-    if (!messageText.startsWith(regular)) {
-      return false;
-    }
-
     // 提取指令主体部分
-    const body = messageText.slice(regular.length).trim();
+    const body = messageText.split('侠客查看好感度')[1]?.trim() || '';
 
     // 如果没有指定角色名称，显示所有角色的好感度
     if (!body) {

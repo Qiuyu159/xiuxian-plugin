@@ -3,7 +3,7 @@ import { giveItemToCharacter } from '../../../model/xk/give';
 import { selects } from '../../mw-captcha';
 import mw from '@src/response/mw-captcha';
 // 赠予指令前缀
-export const regular = '侠客赠予';
+export const regular = /^(#|＃|\/)?侠客赠予.*$/;
 
 const res = onResponse(selects, async e => {
   const Send = useSend(e);
@@ -12,13 +12,8 @@ const res = onResponse(selects, async e => {
     // 解析赠送命令 - 使用字符串分割方式
     const messageText = e.MessageText.trim();
 
-    // 检查是否以指令前缀开头
-    if (!messageText.startsWith(regular)) {
-      return false;
-    }
-
     // 提取指令主体部分
-    const body = messageText.slice(regular.length).trim();
+    const body = messageText.split('侠客赠予')[1]?.trim() || '';
 
     // 使用*号分割参数
     const parts = body
@@ -55,7 +50,7 @@ const res = onResponse(selects, async e => {
     void Send(Text('处理赠送请求时发生错误，请稍后重试！'));
   }
 
-  return true;
+  return false;
 });
 
 export default onResponse(selects, [mw.current, res.current]);

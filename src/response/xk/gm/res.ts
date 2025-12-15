@@ -11,16 +11,15 @@ import mw from '@src/response/mw-captcha';
  * 背包逻辑：如果背包里有物品了，那么直接背包里的物品数量加上加入到背包里的物品数量
  * 如果背包里没有，就直接把对象数据加入到背包里
  */
-export const regular = /侠客获得/;
+// GM指令前缀
+export const regular = /^(#|＃|\/)?侠客获得.*$/;
 
 const res = onResponse(selects, async e => {
-  logger.info('GM指令：侠客获得物品名称*数量');
   const Send = useSend(e);
   const userId = e.UserId;
 
   // 检查玩家是否存在
   if (!(await existplayer(userId))) {
-    logger.info('检测玩家是否存在');
     void Send(Text('请先在修仙系统中注册！'));
 
     return false;
@@ -30,7 +29,6 @@ const res = onResponse(selects, async e => {
   const xkPlayerDataStr = await redis.get(`xk_player_data:${userId}`);
 
   if (!xkPlayerDataStr) {
-    logger.info('检测玩家是否已在侠客江湖注册过');
     void Send(Text('请先进入侠客江湖！'));
 
     return false;
@@ -39,7 +37,6 @@ const res = onResponse(selects, async e => {
   // 解析指令
   const parseResult = parseGMCommand(e.MessageText);
 
-logger.info('解析指令', parseResult);
   if (!parseResult.isValid) {
     void Send(Text(parseResult.error || '格式错误！正确格式：侠客获得物品名称*数量'));
 
@@ -47,10 +44,8 @@ logger.info('解析指令', parseResult);
   }
 
   // 执行GM指令
-  logger.info('执行GM指令');
   const result = await executeGMGiveItem(userId, parseResult.itemName!, parseResult.quantity!);
 
-  logger.info('执行GM指令结果', result);
   if (result.success) {
     if (result.currentMoney !== undefined) {
       void Send(Text(`${result.message}\n当前铜钱：${result.currentMoney}`));
